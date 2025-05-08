@@ -221,25 +221,25 @@
                         <!-- Nome -->
                         <div class="mb-3 input-group">
                             <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                            <input type="text" class="form-control" placeholder="Nome Completo" required>
+                            <input type="text" class="form-control" id="username" placeholder="Nome Completo" required>
                         </div>
                         <!-- Email -->
                         <div class="mb-3 input-group">
                             <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                            <input type="email" class="form-control" placeholder="Email" required>
+                            <input type="email" class="form-control" id="email" placeholder="Email" required>
                         </div>
                         <!-- Senha -->
                         <div class="mb-3 input-group">
                             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" class="form-control" placeholder="Senha" required>
+                            <input type="password" class="form-control" id="password" placeholder="Senha" required>
                         </div>
                         <!-- Confirmar Senha -->
                         <div class="mb-3 input-group">
                             <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" class="form-control" placeholder="Confirmar Senha" required>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmar Senha" required>
                         </div>
                         <!-- Submit button -->
-                        <button type="submit" class="btn-custom">Cadastrar</button>
+                        <button type="submit" class="btn-custom" id="submit-btn">Cadastrar</button>
                     </form>
                 </div>
             </div>
@@ -253,5 +253,47 @@
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+        <script>
+            document.querySelector('form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+            
+                const username = document.getElementById('username').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+            
+                if (password !== confirmPassword) {
+                    alert('As senhas não coincidem!');
+                    return;
+                }
+            
+                try {
+                    const response = await fetch('http://localhost:8000/users/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, email, password }),
+                    });
+            
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        alert('Erro: ' + errorData.detail);
+                        return;
+                    }
+            
+                    const data = await response.json();
+                    alert('Usuário cadastrado com sucesso!');
+            
+                    // Redireciona pro login (opcional)
+                    window.location.href = 'login.html';
+                } catch (err) {
+                    console.error('Erro na requisição:', err);
+                    alert('Erro ao tentar cadastrar. Verifique a conexão.');
+                }
+            });
+            </script>
+            
 </body>
 </html>
