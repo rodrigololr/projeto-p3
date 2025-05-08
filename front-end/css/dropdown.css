@@ -1,0 +1,86 @@
+html, body {
+  min-height: 100vh; /* isso resolve seu problema */
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-color: #09bc8a;
+  --secondary-color: #508991;
+  --dark-color: #172a3a;
+  --light-color: #fefcf9;
+  --accent-color: #74B3CE;
+}
+
+
+.active {
+    color: #09bc8a !important;
+}
+
+.padding {
+    padding: 0 50px !important;
+  }
+
+.dropdown-toggle::after {
+    display: none !important;
+  }
+
+  .dropdown-menu {
+    border: none;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+
+  .dropdown-item {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #09bc8a;
+  }
+
+
+  .card-align-1{
+    padding-left: 0px;
+    padding-right: 10px;
+  }
+  .card-align-2{
+    padding-right: 0px;
+    padding-left: 10px;
+  }
+
+  /* =-=-=-=-=- CSS DO SWITCH ==-=-=-=-=-=-= */
+  .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+
+  .form-switch .form-check-input {
+    width: 2.5em;
+    margin-left: 0.5em;
+  }
+  
+
+  @media only screen and (max-width: 992px) {
+    .padding {
+      padding: 0 10px !important;
+    }
+    .navbar-nav {
+        text-align: center;
+    }
+
+    #options{
+        border: 0 !important;
+    }
+
+    .card-align-1,.card-align-2{
+      padding-right: 0;
+      padding-left: 0;
+    }
+    
+    
+    
+
+
+}

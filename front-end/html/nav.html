@@ -1,0 +1,91 @@
+<!--NAVBAR-->
+
+<header style="background-color: #FFF9ED">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <!-- logo -->
+        <a class="navbar-brand px-2" href="principal.html">
+          <img src="../imgs/logo.svg" alt="PouPix" style="height: 40px;">
+        </a>
+
+        <!-- botao do menu hamburguer (mobile) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- menu de navegacao -->
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <!-- links do menu principal -->
+          <div class="navbar-nav d-flex">
+            <hr class=" d-lg-none d-block px-4">
+            <div class="padding border-start border-dark" id="options">
+              <a class="nav-link fs-4 fw-bolder" id="buttons-nav" aria-current="page" href="principal.html" style="color: #172a3a">
+                Geral
+              </a>
+            </div>
+          
+            <div class="padding border-start border-dark" id="options">
+              <a class="nav-link fs-4 fw-bolder" id="buttons-nav-2" href="metas.html" style="color: #172a3a">
+                Metas
+              </a>
+            </div>
+          
+            <div class="padding border-start border-dark" id="options">
+              <a class="nav-link fs-4 fw-bolder" id="buttons-nav-3" href="dicas.html" style="color: #172a3a">
+                Dicas
+              </a>
+            </div>
+          </div>
+          
+
+          <!-- icone de perfil com dropdown (desktop) -->
+          <div class="dropdown d-none d-lg-block ms-auto px-4">
+            <a class="text-dark fs-1 dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
+              <li><a class="dropdown-item" href="config-perfil.html">Perfil</a></li>
+              <li>
+                <div class="dropdown-item d-flex justify-content-between align-items-center">
+                  Notificações
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="notificationToggle" checked>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="landing.html">Sair</a></li>
+            </ul>
+          </div>
+
+          <!-- texto "perfil" com dropdown (mobile) -->
+          <div class="dropdown d-block d-lg-none ms-auto padding navbar-nav">
+            <a class="nav-link fs-4 fw-bolder dropdown-toggle" role="button" id="dropdownMenuLinkMobile" data-bs-toggle="dropdown" aria-expanded="false" style="color: #172a3a">
+              Perfil
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLinkMobile">
+              <li><a class="dropdown-item" href="config-perfil.html">Perfil</a></li>
+              <li>
+                <div class="dropdown-item d-flex justify-content-between align-items-center">
+                  Notificações
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="notificationToggleMobile" checked>
+                  </div>
+                </div>
+            </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="landing.html">Sair</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>

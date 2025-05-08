@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <title>PouPix - Crie sua conta</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Bootstrap CSS v5.3.2 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <style>
+        /* mobile */
+        body {
+            background-color: #f1f3f5; 
+            margin: 0;
+        }
+
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .welcome-section {
+            background: linear-gradient(176deg, rgba(80,137,145,1) 0%, rgba(201,237,214,1) 100%); background-repeat: no-repeat; background-size: cover;
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-section {
+            background-color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+            flex-grow: 1;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 350px;
+            margin: auto; 
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .btn-custom {
+            background-color: #343a40;
+            color: white;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            width: 100%;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-custom:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background-color: #343a40;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        .input-group-text {
+            background-color: #e9ecef;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .form-control {
+            border-radius: 0 8px 8px 0;
+            padding: 0.75rem;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 767.98px) {
+            .welcome-section {
+                min-height: 40vh;
+                padding: 2.5rem 1.5rem;
+            }
+
+            .welcome-section h2 {
+                font-size: 2.2rem;
+            }
+
+            .welcome-section p {
+                font-size: 1.2rem;
+            }
+
+            .form-section {
+                min-height: 60vh;
+                padding: 2rem 1.5rem;
+            }
+
+            .form-container {
+                max-width: 90%;
+            }
+
+            .form-section h2 {
+                font-size: 1.6rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .input-group, .btn-custom {
+                margin-bottom: 1.2rem;
+            }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 768px) {
+            .register-container {
+                flex-direction: row;
+            }
+
+            .welcome-section {
+                padding: 2rem;
+                min-height: 100vh;
+                width: 40%;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .form-section {
+                padding: 2rem;
+                width: 60%;
+                min-height: 100vh;
+                box-shadow: -5px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .form-container {
+                max-width: 400px;
+            }
+
+            .btn-custom, .btn-outline-custom {
+                font-size: 1rem;
+                padding: 0.75rem;
+            }
+        }
+
+        
+        @media (max-width: 576px) {
+            .welcome-section {
+                padding: 2rem 1rem;
+                min-height: 35vh;
+            }
+
+            .welcome-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .welcome-section p {
+                font-size: 1rem;
+            }
+
+            .form-section {
+                padding: 1.5rem 1rem;
+                min-height: 55vh;
+            }
+
+            .form-section h2 {
+                font-size: 1.4rem;
+            }
+
+            .form-container {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <main>
+        <div class="register-container">
+            <!-- section -->
+            <div class="welcome-section">
+                <h2 class="text-dark">Bem vindo</h2>
+                <p class="text-dark">Lorem ipsum dolor sit amet.</p>
+                <a href="login.html" class="btn-outline-custom">Logar</a>
+            </div>
+            <!-- form section -->
+            <div class="form-section">
+                <div class="form-container">
+                    <h2>Crie sua conta</h2>
+                    <form>
+                        <!-- Nome -->
+                        <div class="mb-3 input-group">
+                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                            <input type="text" class="form-control" placeholder="Nome Completo" required>
+                        </div>
+                        <!-- Email -->
+                        <div class="mb-3 input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" placeholder="Email" required>
+                        </div>
+                        <!-- Senha -->
+                        <div class="mb-3 input-group">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" class="form-control" placeholder="Senha" required>
+                        </div>
+                        <!-- Confirmar Senha -->
+                        <div class="mb-3 input-group">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" class="form-control" placeholder="Confirmar Senha" required>
+                        </div>
+                        <!-- Submit button -->
+                        <button type="submit" class="btn-custom">Cadastrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <!-- Place footer here -->
+    </footer>
+    <!-- Bootstrap JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</body>
+</html>
