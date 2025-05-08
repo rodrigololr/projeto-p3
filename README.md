@@ -23,4 +23,4 @@ Geração de dicas personalizadas com base no perfil de consumo
 
 Interface limpa e responsiva
 
-Testes automatizados na API
+Testes automatizados na API# projeto-p3
