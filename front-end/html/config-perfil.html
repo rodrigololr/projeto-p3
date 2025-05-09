@@ -498,6 +498,95 @@
       document.getElementById("confirmPassword").value = "";
     });
 
+    // trabalhando no back 
+    editButton.addEventListener("click", () => {
+  document.querySelectorAll("#info input, #info select").forEach(el => el.disabled = false);
+  saveUserInfoButton.style.display = "inline-block";
+});
+
+saveUserInfoButton.addEventListener("click", async () => {
+  const fullName = document.getElementById("fullName").value;
+  const nickname = document.getElementById("nickname").value;
+  const gender = document.getElementById("gender").value;
+  const birthDate = document.getElementById("birthDate").value;
+
+  const response = await fetch("http://127.0.0.1:8000/api/perfil", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      full_name: fullName,
+      nickname: nickname,
+      gender: gender,
+      birth_date: birthDate
+    })
+  });
+
+  const result = await response.json();
+
+  const alertContainer = document.getElementById("alertContainer");
+  if (response.ok) {
+    alertContainer.innerHTML = `<div class="alert alert-success">Perfil atualizado com sucesso!</div>`;
+    document.querySelectorAll("#info input, #info select").forEach(el => el.disabled = true);
+    saveUserInfoButton.style.display = "none";
+  } else {
+    alertContainer.innerHTML = `<div class="alert alert-danger">${result.detail || "Erro ao atualizar perfil"}</div>`;
+  }
+});
+
+//função para se validar as senhas lá
+function validatePasswordForm() {
+    const currentPassword = document.getElementById("currentPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      showAlert("Por favor, preencha todos os campos.", "danger");
+      return false;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      showAlert("A nova senha e a confirmação não coincidem.", "danger");
+      return false;
+    }
+    
+    return true;
+  }
+
+  // lidar com a requisiçao de alterar senha blablabla
+  savePasswordButton.addEventListener("click", async (e) => {
+    e.preventDefault();
+    
+    if (validatePasswordForm()) {
+      const currentPassword = document.getElementById("currentPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+
+      try {
+        const response = await fetch("/alterar-senha", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            current_password: currentPassword,
+            new_password: newPassword
+          })
+        });
+
+        if (response.ok) {
+          showAlert("Senha alterada com sucesso!");
+        } else {
+          const error = await response.json();
+          showAlert(error.detail, "danger");
+        }
+      } catch (error) {
+        showAlert("Ocorreu um erro ao tentar alterar a senha.", "danger");
+      }
+    }
+  });
+
+
   </script>
 
 
