@@ -1,3 +1,4 @@
+# schemas.py
 from pydantic import BaseModel, ConfigDict, EmailStr  # type: ignore
 
 
@@ -25,6 +26,16 @@ class UserList(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = 'bearer'
 
 
 class FilterPage(BaseModel):

@@ -1,3 +1,4 @@
+# auth.py
 from http import HTTPStatus
 from typing import Annotated
 

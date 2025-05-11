@@ -1,7 +1,9 @@
+# Users.py
 from http import HTTPStatus
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException  # type: ignore
+from fastapi.security import OAuth2PasswordRequestForm  # type: ignore
 from sqlalchemy import select  # type: ignore
 from sqlalchemy.exc import IntegrityError  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
@@ -10,13 +12,16 @@ from back_app.database import get_session
 from back_app.models import User
 from back_app.schemas import (
     Message,
+    Token,
     UserList,
     UserPublic,
     UserSchema,
 )
 from back_app.security import (
+    create_access_token,
     get_current_user,
     get_password_hash,
+    verify_password,
 )
 
 router = APIRouter(prefix='/users', tags=['users'])
@@ -54,6 +59,25 @@ def create_user(user: UserSchema, session: T_Session):  # type: ignore
     session.refresh(db_user)
 
     return db_user
+
+
+@router.post('/login', response_model=Token)
+def login(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: T_Session,
+):
+    user = session.scalar(select(User).where(User.email == form_data.username))
+
+    if not user or not verify_password(form_data.password, user.password):
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Email ou senha inválidos',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+
+    # Cria token JWT com o e-mail como subject (sub)
+    access_token = create_access_token(data={'sub': user.email})
+    return {'access_token': access_token, 'token_type': 'bearer'}
 
 
 @router.get('/', response_model=UserList)

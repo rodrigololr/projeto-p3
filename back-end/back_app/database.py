@@ -1,3 +1,4 @@
+# database.py
 from sqlalchemy import create_engine  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
 
