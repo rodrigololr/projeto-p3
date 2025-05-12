@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import func  # type: ignore
+from sqlalchemy import Column, String, Date, func  # type: ignore
 from sqlalchemy.orm import (  # type: ignore
     Mapped,
     mapped_column,
@@ -30,3 +30,7 @@ class User:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+
+    full_name = Column(String, nullable=True)
+    gender = Column(String, nullable=True)
+    birth_date = Column(Date, nullable=True)

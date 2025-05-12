@@ -13,9 +13,10 @@ from back_app.models import User
 from back_app.schemas import (
     Message,
     Token,
-    UserList,
     UserPublic,
     UserSchema,
+    UserOut,
+
 )
 from back_app.security import (
     create_access_token,
@@ -64,7 +65,7 @@ def create_user(user: UserSchema, session: T_Session):  # type: ignore
 @router.post('/login', response_model=Token)
 def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: T_Session,
+    session: T_Session,  # type: ignore
 ):
     user = session.scalar(select(User).where(User.email == form_data.username))
 
@@ -80,10 +81,9 @@ def login(
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 
-@router.get('/', response_model=UserList)
-def read_users(session: T_Session, skip: int = 0, limit: int = 100):  # type: ignore
-    users = session.scalars(select(User).offset(skip).limit(limit)).all()
-    return {'users': users}
+@router.get('/me', response_model=UserOut)
+def get_user_info(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 @router.put('/{user_id}', response_model=UserPublic)
