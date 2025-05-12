@@ -2,7 +2,7 @@
 <html lang="pt-br">
   <head>
     <title>PouPix</title>
-    <!-- meta tags obrigatorias -->
+    <!-- meta tags obrigatórias -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
@@ -23,21 +23,21 @@
 
     <!-- estilos personalizados -->
     <style>
-      main.margin{
+      main.margin {
         margin-top: 90px !important;
       }
 
-      .width{
+      .width {
         width: 120px;
       }
 
-      .line{
+      .line {
         display: none;
       }
 
       /* ajustes para telas pequenas */
       @media only screen and (max-width: 992px) {
-        .date{
+        .date {
           display: none;
         }
 
@@ -46,53 +46,54 @@
           border: 0 !important;
         }
 
-        .alinhamento{
-            text-align: center;
+        .alinhamento {
+          text-align: center;
         }
 
-        .titulo{
-            margin-bottom: 30px !important; 
+        .titulo {
+          margin-bottom: 30px !important;
         }
 
-        main.margin{
-        margin-top: 60px !important;
+        main.margin {
+          margin-top: 60px !important;
         }
 
-      .width{
-        width: 120px;
-      }
+        .width {
+          width: 120px;
+        }
 
-      .line{
-        display: block;
-        margin-top: 20px;
-      }
+        .line {
+          display: block;
+          margin-top: 20px;
+        }
 
-      .alinhar-botoes{
-        margin-left:20px ;
-      }
-      
-      .position{
-        padding-right: 0;
-      }
+        .alinhar-botoes {
+          margin-left: 20px;
+        }
 
-      .line-v{
+        .position {
+          padding-right: 0;
+        }
+
+        .line-v {
           display: none;
-      }
-      .col-12.col-md-5 > div {
+        }
+
+        .col-12.col-md-5 > div {
           width: 100%;
           margin-left: auto;
           margin-right: auto;
-      }
+        }
       }
     </style>
   </head>
 
   <body style="background: linear-gradient(176deg, rgba(80,137,145,1) 0%, rgba(201,237,214,1) 100%); background-repeat: no-repeat; background-size: cover;">
-    <!-- cabecalho com barra de navegacao -->
+    <!-- cabeçalho com barra de navegação -->
     <div id="navbar-placeholder"></div>
 
     <div class="container" style="margin-top: 50px; padding: 60px;">
-  
+
       <!-- Header com saudação e data -->
       <div class="col-12 mb-4 col-lg-6">
         <div class="d-flex justify-content-between align-items-center p-3 bg-white rounded-3 shadow-sm" style="height: 60px; margin-left: -9px;">
@@ -107,32 +108,32 @@
           </div>
         </div>
       </div>
-    
+
       <!-- Área principal -->
       <div class="row align-items-center position" style="min-height: 400px; background: white; border-radius: 12px; padding: 20px;">
-        
+
         <!-- Lado esquerdo: blocos de receita -->
         <div class="col-12 col-md-5">
           <div onclick="abrirListaReceita()" style="cursor: pointer; background-color: #09BC8A; border-radius: 12px; margin: 20px 0;" class="d-flex align-items-center justify-content-center flex-column">
             <h4 class="text-dark py-2">Receita Mensal</h4>
             <p id="valorTotalReceita" class="fs-5">R$ 0,00</p>
           </div>
-    
+
           <div onclick="abrirListaDespesa()" style="cursor: pointer; background-color: #DA5F5F; border-radius: 12px; margin: 20px 0;" class="d-flex align-items-center justify-content-center flex-column">
             <h4 class="text-dark py-2">Gasto Mensal</h4>
             <p id="valorTotalDespesa" class="fs-5">R$ 0,00</p>
           </div>
-    
+
           <div style="background-color: #74B3CE; border-radius: 12px; margin: 20px 0;" class="d-flex align-items-center justify-content-center flex-column">
             <h4 class="text-dark py-2">Saldo Geral</h4>
             <p id="saldoGeral" class="fs-5">R$ 0,00</p>
           </div>
         </div>
-    
+
         <!-- linha vertical -->
         <div class="col-md-1 d-flex justify-content-center" style="margin-right: 20px;">
         </div>
-    
+
         <!-- Lado direito: botões -->
         <div class="col-md-5 d-flex flex-column align-items-center justify-content-center flex-lg-row">
           <div>
@@ -152,7 +153,7 @@
           </div>
         </div>
       </div>
-    
+
       <!-- Seção Contas e Cartões -->
       <section class="my-5">
         <div class="row g-4">
@@ -176,7 +177,7 @@
               </div>
             </div>
           </div>
-    
+
           <!-- Bloco Cartões -->
           <div class="col-lg-6 d-flex card-align-2">
             <div class="border rounded p-4 d-flex flex-column w-100 bg-white">
@@ -201,7 +202,7 @@
         </div>
       </section>
     </div>
-    
+
     <!-- modal receita -->
     <div class="modal fade" id="modalReceita" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
@@ -221,6 +222,9 @@
           <h5 class="modal-title mb-3">Adicionar Despesa</h5>
           <input id="inputNomeDespesa" type="text" class="form-control mb-2" placeholder="Nome">
           <input id="inputValorDespesa" type="number" class="form-control mb-2" placeholder="Valor (R$)">
+          <select id="tagSelect" class="form-select mb-2">
+            <option value="">Selecione uma tag</option>
+          </select>
           <button id="btnSalvarDespesa" class="btn btn-danger w-100">Salvar</button>
         </div>
       </div>
@@ -258,7 +262,7 @@
     </div>
 
     <footer>
-      <!-- rodape -->
+      <!-- rodapé -->
     </footer>
 
     <!-- scripts do bootstrap -->
@@ -274,18 +278,21 @@
     <script>
       let receitas = [];
       let despesas = [];
-    
-      // Função pra formatar valores no formato brasileiro (R$ 10.000,00)
+      let tags = ["Alimentação", "Transporte", "Lazer"]; // Tags base
+      let goals = [];
+
       function formatarValor(valor) {
         return `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       }
-    
-      // Fetch data from the back-end when the page loads
+
       window.onload = async () => {
         await fetchData();
+        await fetchGoals();
+        await fetchBalance();
         atualizarTotais();
+        preencherTags();
       };
-    
+
       async function fetchData() {
         try {
           const token = localStorage.getItem('token');
@@ -294,31 +301,80 @@
             window.location.href = 'login.html';
             return;
           }
-    
+
           const revenueResponse = await fetch('http://localhost:8000/finance/revenues/', {
             method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
           if (!revenueResponse.ok) throw new Error(`Erro na resposta do servidor: ${revenueResponse.status}`);
           receitas = await revenueResponse.json();
-    
+
           const expenseResponse = await fetch('http://localhost:8000/finance/expenses/', {
             method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
-          if (!expenseResponse.ok) throw new Error(`Erro na resposta do servidor: ${expenseResponse.status}`);
+          if (!expenseResponse.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
           despesas = await expenseResponse.json();
         } catch (error) {
           console.error('Erro ao buscar dados:', error);
         }
       }
-    
+
+      async function fetchGoals() {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          const response = await fetch('http://localhost:8000/finance/goals/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          goals = await response.json();
+          goals.forEach(goal => {
+            if (!tags.includes(goal.tag)) tags.push(goal.tag);
+          });
+        } catch (error) {
+          console.error('Erro ao buscar metas:', error);
+        }
+      }
+
+      async function fetchBalance() {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          const response = await fetch('http://localhost:8000/finance/balance/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          const balance = await response.json();
+          document.getElementById('saldoGeral').textContent = formatarValor(balance);
+        } catch (error) {
+          console.error('Erro ao buscar saldo:', error);
+        }
+      }
+
+      function preencherTags() {
+        const tagSelect = document.getElementById('tagSelect');
+        tagSelect.innerHTML = '<option value="">Selecione uma tag</option>';
+        tags.forEach(tag => {
+          const option = document.createElement('option');
+          option.value = tag;
+          option.textContent = tag;
+          tagSelect.appendChild(option);
+        });
+      }
+
       document.getElementById('btnSalvarReceita').addEventListener('click', async () => {
         const nome = document.getElementById('inputNomeReceita').value;
         const valor = parseFloat(document.getElementById('inputValorReceita').value);
@@ -330,18 +386,16 @@
               window.location.href = 'login.html';
               return;
             }
-    
+
             const response = await fetch('http://localhost:8000/finance/revenues/', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-              },
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
               body: JSON.stringify({ name: nome, amount: valor }),
             });
             if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
             const newRevenue = await response.json();
             receitas.push(newRevenue);
+            await fetchBalance(); // Atualiza saldo
             atualizarTotais();
             document.getElementById('inputNomeReceita').value = '';
             document.getElementById('inputValorReceita').value = '';
@@ -352,10 +406,12 @@
           }
         }
       });
-    
+
       document.getElementById('btnSalvarDespesa').addEventListener('click', async () => {
         const nome = document.getElementById('inputNomeDespesa').value;
         const valor = parseFloat(document.getElementById('inputValorDespesa').value);
+        const tagSelect = document.getElementById('tagSelect');
+        const tag = tagSelect.value || tagSelect.options[tagSelect.selectedIndex].text;
         if (nome && !isNaN(valor)) {
           try {
             const token = localStorage.getItem('token');
@@ -364,21 +420,20 @@
               window.location.href = 'login.html';
               return;
             }
-    
+
             const response = await fetch('http://localhost:8000/finance/expenses/', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-              },
-              body: JSON.stringify({ name: nome, amount: valor }),
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+              body: JSON.stringify({ name: nome, amount: valor, tag: tag }),
             });
             if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
             const newExpense = await response.json();
             despesas.push(newExpense);
+            await fetchBalance(); // Atualiza saldo
             atualizarTotais();
             document.getElementById('inputNomeDespesa').value = '';
             document.getElementById('inputValorDespesa').value = '';
+            tagSelect.value = '';
             const modal = bootstrap.Modal.getInstance(document.getElementById('modalDespesa'));
             modal.hide();
           } catch (error) {
@@ -386,16 +441,15 @@
           }
         }
       });
-    
+
       function atualizarTotais() {
         const totalReceita = receitas.reduce((acc, r) => acc + r.amount, 0);
         const totalDespesa = despesas.reduce((acc, d) => acc + d.amount, 0);
-        const saldo = totalReceita - totalDespesa;
         document.getElementById('valorTotalReceita').textContent = formatarValor(totalReceita);
         document.getElementById('valorTotalDespesa').textContent = formatarValor(totalDespesa);
-        document.getElementById('saldoGeral').textContent = formatarValor(saldo);
+        // O saldo geral agora é buscado do banco
       }
-    
+
       function abrirListaReceita() {
         const lista = document.getElementById('listaReceita');
         lista.innerHTML = '';
@@ -414,7 +468,7 @@
         });
         new bootstrap.Modal(document.getElementById('modalListaReceita')).show();
       }
-    
+
       async function deletarReceita(id) {
         try {
           const token = localStorage.getItem('token');
@@ -423,23 +477,21 @@
             window.location.href = 'login.html';
             return;
           }
-    
+
           const response = await fetch(`http://localhost:8000/finance/revenues/${id}`, {
             method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
           if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
           receitas = receitas.filter(r => r.id !== id);
+          await fetchBalance(); // Atualiza saldo
           atualizarTotais();
-          abrirListaReceita(); // Atualiza a lista
+          abrirListaReceita();
         } catch (error) {
           console.error('Erro ao deletar receita:', error);
         }
       }
-    
+
       function abrirListaDespesa() {
         const lista = document.getElementById('listaDespesa');
         lista.innerHTML = '';
@@ -447,7 +499,7 @@
           const item = document.createElement('li');
           item.className = 'list-group-item d-flex justify-content-between align-items-center';
           item.innerHTML = `
-            <span>${d.name}</span>
+            <span>${d.name} (Tag: ${d.tag || 'Sem tag'})</span>
             <span>
               ${formatarValor(d.amount)}
               <button class="btn btn-sm btn-danger ms-2" onclick="deletarDespesa(${d.id})">
@@ -458,7 +510,7 @@
         });
         new bootstrap.Modal(document.getElementById('modalListaDespesa')).show();
       }
-    
+
       async function deletarDespesa(id) {
         try {
           const token = localStorage.getItem('token');
@@ -467,18 +519,16 @@
             window.location.href = 'login.html';
             return;
           }
-    
+
           const response = await fetch(`http://localhost:8000/finance/expenses/${id}`, {
             method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
           if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
           despesas = despesas.filter(d => d.id !== id);
+          await fetchBalance(); // Atualiza saldo
           atualizarTotais();
-          abrirListaDespesa(); // Atualiza a lista
+          abrirListaDespesa();
         } catch (error) {
           console.error('Erro ao deletar despesa:', error);
         }

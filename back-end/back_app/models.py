@@ -1,20 +1,21 @@
 from datetime import datetime
+from typing import Optional
 
-from sqlalchemy import (  # type: ignore
+from sqlalchemy import (
     Column,
     Date,
     ForeignKey,
     String,
+    Float,
     func,
 )
-from sqlalchemy.orm import (  # type: ignore
+from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     registry,
 )
 
 table_registry = registry()
-
 
 @table_registry.mapped_as_dataclass
 class User:
@@ -27,11 +28,11 @@ class User:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+    total_balance: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)  # Valor padrão explícito
 
     full_name = Column(String, nullable=True)
     gender = Column(String, nullable=True)
     birth_date = Column(Date, nullable=True)
-
 
 @table_registry.mapped_as_dataclass
 class Revenue:
@@ -45,7 +46,6 @@ class Revenue:
         init=False, server_default=func.now()
     )
 
-
 @table_registry.mapped_as_dataclass
 class Expense:
     __tablename__ = 'expenses'
@@ -54,6 +54,20 @@ class Expense:
     name: Mapped[str]
     amount: Mapped[float]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    tag: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now()
+    )
+
+@table_registry.mapped_as_dataclass
+class Goal:
+    __tablename__ = 'goals'
+
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    name: Mapped[str]
+    amount: Mapped[float]
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    tag: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )

@@ -2,182 +2,350 @@
 <html lang="pt-br">
   <head>
     <title>PouPix - Metas</title>
+    <!-- meta tags obrigatórias -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- bootstrap css -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      crossorigin="anonymous"
+    />
+    <!-- bootstrap icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
 
     <link rel="stylesheet" href="../css/dropdown.css">
     <script src="../js/functions-nav.js"></script>
 
+    <!-- estilos personalizados -->
     <style>
-
-      .card {
-        margin: 15px 0;
-      }
-      .w-auto{
-        width: 80px !important;
+      main.margin {
+        margin-top: 90px !important;
       }
 
+      .width {
+        width: 120px;
+      }
+
+      .goal-item {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .goal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .goal-details {
+        margin-top: 10px;
+      }
+
+      .progress {
+        height: 10px;
+        margin-top: 5px;
+      }
+
+    .goal-header h6 {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--dark-color);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color) !important;
+      border-color: var(--primary-color) !important;
+    }
+
+    .btn-primary:hover {
+      background-color: #07a178 !important;
+      border-color: #07a178 !important;
+    }
+
+    .btn-danger {
+      background-color: #dc3545 !important;
+      border-color: #dc3545 !important;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333 !important;
+      border-color: #c82333 !important;
+    }
+
+    .progress-bar {
+      background-color: var(--primary-color) !important;
+    }
+
+
+      /* ajustes para telas pequenas */
+      @media only screen and (max-width: 992px) {
+        .margin {
+          margin-top: 60px !important;
+        }
+
+        .width {
+          width: 120px;
+        }
+
+        .goal-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .goal-header .btn-group {
+          margin-top: 10px;
+        }
+      }
     </style>
   </head>
 
   <body style="background: linear-gradient(176deg, rgba(80,137,145,1) 0%, rgba(201,237,214,1) 100%); background-repeat: no-repeat; background-size: cover;">
-    
-      <!-- cabecalho com barra de navegacao -->
-      <div id="navbar-placeholder"></div>
+    <!-- cabeçalho com barra de navegação -->
+    <div id="navbar-placeholder"></div>
 
-    <main style="margin-top: 20px;">
-      <div class="container" style="padding: 60px;">
+    <div class="container margin" style="padding: 60px;">
+      <h2 class="mb-4 text-white">Gerenciamento de Metas</h2>
 
-        <div class="d-flex justify-content-end mb-3">
-          <button id="btnEditar" class="btn me-2" style="background-color: #09BC8A;">Editar Limites<i class="bi bi-pencil-square ms-2"></i></button>
-          <button id="btnSalvar" class="btn btn-success d-none">Salvar</button>
-        </div>
-
-        <div class="card">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <span class="fw-semibold">Casa</span>
-            <span class="text-muted small limite">R$ 500 / R$ 1000</span>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <span class="fw-semibold">Alimentação</span>
-            <span class="text-muted small limite">R$ 300 / R$ 800</span>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <span class="fw-semibold">Transporte</span>
-            <span class="text-muted small limite">R$ 100 / R$ 300</span>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <span class="fw-semibold">Lazer</span>
-            <span class="text-muted small limite">R$ 100 / R$ 300</span>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <span class="fw-semibold">Saúde</span>
-            <span class="text-muted small limite">R$ 100 / R$ 300</span>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <span class="fw-semibold">Educação</span>
-            <span class="text-muted small limite">R$ 100 / R$ 300</span>
-          </div>
-        </div>
-
-        <div class="card text-center card-add" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalNovaMeta">
-          <button type="button" class="btn btn-outline-light card-body fw-semibold">+ Outro</button>
-        </div>
-
+      <!-- Lista de metas -->
+      <div class="card p-4 mb-4">
+        <h4 class="card-title">Minhas Metas</h4>
+        <ul id="listaMetas" class="list-group list-group-flush">
+          <!-- Metas serão preenchidas via JavaScript -->
+        </ul>
       </div>
-    </main>
 
-    <!-- Modal Nova Meta -->
-    <div class="modal fade" id="modalNovaMeta" tabindex="-1" aria-labelledby="modalNovaMetaLabel" aria-hidden="true">
+      <!-- Botão para adicionar meta -->
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMeta">Adicionar Nova Meta</button>
+    </div>
+
+    <!-- Modal para adicionar/editar meta -->
+    <div class="modal fade" id="modalMeta" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalNovaMetaLabel">Adicionar nova meta</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <input type="text" class="form-control mb-2" placeholder="Nome da meta">
-            <input type="number" class="form-control" placeholder="Limite da meta">
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button class="btn btn-primary">Adicionar</button>
-          </div>
+        <div class="modal-content p-3">
+          <h5 class="modal-title mb-3" id="modalMetaTitle">Adicionar Meta</h5>
+          <input id="inputNomeMeta" type="text" class="form-control mb-2" placeholder="Nome">
+          <input id="inputValorMeta" type="number" class="form-control mb-2" placeholder="Valor (R$)">
+          <input id="inputTagMeta" type="text" class="form-control mb-2" placeholder="Tag">
+          <input id="inputMetaId" type="hidden">
+          <button id="btnSalvarMeta" class="btn btn-primary w-100">Salvar</button>
         </div>
       </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <footer>
+      <!-- rodapé -->
+    </footer>
+
+    <!-- scripts do bootstrap -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
 
     <script>
-        const btnEditar = document.getElementById('btnEditar');
-        const btnSalvar = document.getElementById('btnSalvar');
-      
-        function atualizarCards() {
-          return document.querySelectorAll('.card:not(.card-add)');
-        }
-      
-        btnEditar.addEventListener('click', () => {
-          btnEditar.classList.add('d-none');
-          btnSalvar.classList.remove('d-none');
-      
-          atualizarCards().forEach(card => {
-            card.style.opacity = '0.6';
-            const limiteSpan = card.querySelector('.limite');
-            if (limiteSpan) {
-              const [gasto, limite] = limiteSpan.innerText.split('/');
-              limiteSpan.innerHTML = `${gasto} / <input type="text" class="form-control form-control-sm d-inline w-auto" value="${limite.trim().replace('R$', '')}">`;
-            }
+      let goals = [];
+      let despesas = [];
+
+      function formatarValor(valor) {
+        return `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+
+      window.onload = async () => {
+        await fetchDespesas();
+        await fetchGoals();
+        preencherMetas();
+      };
+
+      async function fetchDespesas() {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          const response = await fetch('http://localhost:8000/finance/expenses/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
-        });
-      
-        btnSalvar.addEventListener('click', () => {
-          btnSalvar.classList.add('d-none');
-          btnEditar.classList.remove('d-none');
-      
-          atualizarCards().forEach(card => {
-            card.style.opacity = '1';
-            const limiteSpan = card.querySelector('.limite');
-            if (limiteSpan) {
-              const gasto = limiteSpan.innerText.split('/')[0];
-              const input = card.querySelector('input');
-              if (input) {
-                const novoLimite = input.value;
-                limiteSpan.innerHTML = `${gasto} / R$ ${novoLimite}`;
+          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          despesas = await response.json();
+        } catch (error) {
+          console.error('Erro ao buscar despesas:', error);
+        }
+      }
+
+      async function fetchGoals() {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          const response = await fetch('http://localhost:8000/finance/goals/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          goals = await response.json();
+          // Adiciona metas padrão se não existirem
+          const defaultGoals = ["Casa", "Alimentação", "Transporte", "Lazer", "Saúde", "Educação"];
+          const existingNames = goals.map(g => g.name);
+          for (const name of defaultGoals) {
+            if (!existingNames.includes(name)) {
+              const response = await fetch('http://localhost:8000/finance/goals/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ name: name, amount: 0, tag: name }),
+              });
+              if (response.ok) {
+                const newGoal = await response.json();
+                goals.push(newGoal);
               }
             }
-          });
-        });
-      
-        // Lógica para adicionar nova meta
-        const modalNovaMeta = document.getElementById('modalNovaMeta');
-        const btnAdicionar = modalNovaMeta.querySelector('.btn-primary');
-        const inputNome = modalNovaMeta.querySelector('input[type="text"]');
-        const inputLimite = modalNovaMeta.querySelector('input[type="number"]');
-        const container = document.querySelector('.container');
-      
-        btnAdicionar.addEventListener('click', () => {
-          const nome = inputNome.value.trim();
-          const limite = inputLimite.value.trim();
-      
-          if (nome === '' || limite === '') return;
-      
-          const novoCard = document.createElement('div');
-          novoCard.className = 'card';
-          novoCard.innerHTML = `
-            <div class="card-body d-flex justify-content-between align-items-center">
-              <span class="fw-semibold">${nome}</span>
-              <span class="text-muted small limite">R$ 0 / R$ ${limite}</span>
+          }
+        } catch (error) {
+          console.error('Erro ao buscar metas:', error);
+        }
+      }
+
+      function calcularProgresso(goal) {
+        const despesasRelacionadas = despesas.filter(d => d.tag === goal.tag);
+        const totalGasto = despesasRelacionadas.reduce((acc, d) => acc + d.amount, 0);
+        return totalGasto;
+      }
+
+      function preencherMetas() {
+        const listaMetas = document.getElementById('listaMetas');
+        listaMetas.innerHTML = '';
+        goals.forEach(goal => {
+          const progresso = calcularProgresso(goal);
+          const percentual = goal.amount > 0 ? (progresso / goal.amount) * 100 : 0;
+          const item = document.createElement('li');
+          item.className = 'list-group-item goal-item';
+          item.innerHTML = `
+            <div class="goal-header">
+              <h6 class="mb-0">${goal.name}</h6>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-primary" onclick="editarMeta(${goal.id}, '${goal.name}', ${goal.amount}, '${goal.tag || ''}')">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deletarMeta(${goal.id})">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="goal-details">
+              <small>Tag: ${goal.tag || 'Sem tag'}</small>
+              <p class="mb-1 mt-2">Progresso: ${formatarValor(progresso)} de ${formatarValor(goal.amount)}</p>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" style="width: ${percentual}%;" aria-valuenow="${percentual}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
             </div>
           `;
-      
-          // Inserir antes do card "Outro"
-          const cardOutro = document.querySelector('.card-add') || document.querySelector('.card.text-center');
-          container.insertBefore(novoCard, cardOutro);
-      
-          inputNome.value = '';
-          inputLimite.value = '';
-      
-          const modal = bootstrap.Modal.getInstance(modalNovaMeta);
-          modal.hide();
+          listaMetas.appendChild(item);
         });
-      </script>
-      
+      }
+
+      function editarMeta(id, nome, valor, tag) {
+        document.getElementById('modalMetaTitle').textContent = 'Editar Meta';
+        document.getElementById('inputNomeMeta').value = nome;
+        document.getElementById('inputValorMeta').value = valor;
+        document.getElementById('inputTagMeta').value = tag;
+        document.getElementById('inputMetaId').value = id;
+        new bootstrap.Modal(document.getElementById('modalMeta')).show();
+      }
+
+      document.getElementById('btnSalvarMeta').addEventListener('click', async () => {
+        const nome = document.getElementById('inputNomeMeta').value;
+        const valor = parseFloat(document.getElementById('inputValorMeta').value);
+        const tag = document.getElementById('inputTagMeta').value;
+        const metaId = document.getElementById('inputMetaId').value;
+
+        if (nome && !isNaN(valor)) {
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              console.error('Token não encontrado no localStorage. Faça login novamente.');
+              window.location.href = 'login.html';
+              return;
+            }
+
+            let response;
+            if (metaId) {
+              // Editar meta existente
+              response = await fetch(`http://localhost:8000/finance/goals/${metaId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ name: nome, amount: valor, tag: tag || nome }),
+              });
+            } else {
+              // Adicionar nova meta
+              response = await fetch('http://localhost:8000/finance/goals/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ name: nome, amount: valor, tag: tag || nome }),
+              });
+            }
+
+            if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+            const updatedGoal = await response.json();
+
+            if (metaId) {
+              const index = goals.findIndex(g => g.id === parseInt(metaId));
+              goals[index] = updatedGoal;
+            } else {
+              goals.push(updatedGoal);
+            }
+
+            preencherMetas();
+            document.getElementById('inputNomeMeta').value = '';
+            document.getElementById('inputValorMeta').value = '';
+            document.getElementById('inputTagMeta').value = '';
+            document.getElementById('inputMetaId').value = '';
+            document.getElementById('modalMetaTitle').textContent = 'Adicionar Meta';
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalMeta'));
+            modal.hide();
+          } catch (error) {
+            console.error('Erro ao salvar meta:', error);
+          }
+        }
+      });
+
+      async function deletarMeta(id) {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+
+          const response = await fetch(`http://localhost:8000/finance/goals/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          goals = goals.filter(g => g.id !== id);
+          preencherMetas();
+        } catch (error) {
+          console.error('Erro ao deletar meta:', error);
+        }
+      }
+    </script>
   </body>
 </html>
