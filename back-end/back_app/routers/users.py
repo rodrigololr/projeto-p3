@@ -13,10 +13,9 @@ from back_app.models import User
 from back_app.schemas import (
     Message,
     Token,
+    UserOut,
     UserPublic,
     UserSchema,
-    UserOut,
-
 )
 from back_app.security import (
     create_access_token,

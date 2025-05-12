@@ -53,7 +53,7 @@ addopts = '-p no:warnings'
 [tool.taskipy.tasks]
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff format . && ruff check --fix .'
-run = 'fastapi dev back_app/main.py'
+run = 'uvicorn back_app.main:app --reload'
 pre_test = 'task lint'
 test = 'pytest -s --cov=back_app -vv'
 post_test = 'coverage html'

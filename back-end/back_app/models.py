@@ -1,6 +1,12 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Date, func  # type: ignore
+from sqlalchemy import (  # type: ignore
+    Column,
+    Date,
+    ForeignKey,
+    String,
+    func,
+)
 from sqlalchemy.orm import (  # type: ignore
     Mapped,
     mapped_column,
@@ -14,15 +20,6 @@ table_registry = registry()
 class User:
     __tablename__ = 'users'
 
-    """
-    primary_key: diz que o campo será a chave primária da tabela
-    unique: diz que o campo só pode ter um valor único em toda a tabela.
-    Não podemos ter um username repetido no banco, por exemplo.
-    server_default: executa uma função no momento em que
-    o objeto for instanciado.
-
-    """
-
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     username: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
@@ -34,3 +31,29 @@ class User:
     full_name = Column(String, nullable=True)
     gender = Column(String, nullable=True)
     birth_date = Column(Date, nullable=True)
+
+
+@table_registry.mapped_as_dataclass
+class Revenue:
+    __tablename__ = 'revenues'
+
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    name: Mapped[str]
+    amount: Mapped[float]
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    created_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now()
+    )
+
+
+@table_registry.mapped_as_dataclass
+class Expense:
+    __tablename__ = 'expenses'
+
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    name: Mapped[str]
+    amount: Mapped[float]
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    created_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now()
+    )

@@ -1,7 +1,7 @@
-# schemas.py
-from pydantic import BaseModel, ConfigDict, EmailStr  # type: ignore
+from datetime import date, datetime  # Incluindo o import do datetime
 from typing import Optional
-from datetime import date
+
+from pydantic import BaseModel, ConfigDict, EmailStr  # type: ignore
 
 
 class Message(BaseModel):
@@ -54,3 +54,35 @@ class UserOut(BaseModel):
 class FilterPage(BaseModel):
     offset: int = 0
     limit: int = 100
+
+
+class RevenueBase(BaseModel):
+    name: str
+    amount: float
+
+
+class RevenueCreate(RevenueBase):
+    pass
+
+
+class RevenueOut(RevenueBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ExpenseBase(BaseModel):
+    name: str
+    amount: float
+
+
+class ExpenseCreate(ExpenseBase):
+    pass
+
+
+class ExpenseOut(ExpenseBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
