@@ -410,134 +410,168 @@
   </div>
 
   <script>
-    const profileImage = document.getElementById("profileImage");
-    const uploadPhoto = document.getElementById("uploadPhoto");
+  const profileImage = document.getElementById("profileImage");
+  const uploadPhoto = document.getElementById("uploadPhoto");
 
-    profileImage.addEventListener("click", () => {
-      uploadPhoto.click();
+  profileImage.addEventListener("click", () => {
+    uploadPhoto.click();
+  });
+
+  uploadPhoto.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        profileImage.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Controlar o preenchimento do formulário
+  const editButton = document.getElementById("editButton");
+  const saveUserInfoButton = document.getElementById("saveUserInfoButton");
+  const savePasswordButton = document.getElementById("savePasswordButton");
+  const formElements = document.querySelectorAll("#info input, #info select");
+  const alertContainer = document.getElementById("alertContainer");
+
+  function toggleForm(editable) {
+    formElements.forEach(element => {
+      element.disabled = !editable;
     });
 
-    uploadPhoto.addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          profileImage.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+    saveUserInfoButton.style.display = editable ? "inline-block" : "none";
+    editButton.style.display = editable ? "inline-block" : "none";
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    toggleForm(false);
+  });
+
+  editButton.addEventListener("click", () => {
+    toggleForm(true);
+  });
+
+  // Carregar informações do usuário ao abrir a página
+  document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Usuário não autenticado.");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8000/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Falha ao buscar usuário.");
       }
+
+      const data = await res.json();
+
+      document.getElementById("fullName").value = data.full_name || "";
+      document.getElementById("nickname").value = data.username || "";
+      document.getElementById("gender").value = data.gender || "Escolha uma opção";
+      document.getElementById("birthDate").value = data.birth_date || "";
+
+      document.getElementById("usernameDisplay").textContent = data.username;
+      document.getElementById("emailDisplay").textContent = data.email;
+    } catch (error) {
+      console.error("Erro ao carregar perfil:", error);
+    }
+  });
+
+  // Sistema de alertas
+  function showAlert(message, type = "success") {
+    alertContainer.innerHTML = "";
+
+    const alertDiv = document.createElement("div");
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.setAttribute("role", "alert");
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+    alertContainer.appendChild(alertDiv);
+    alertContainer.style.display = "block";
+
+    new bootstrap.Alert(alertDiv);
+
+    alertDiv.addEventListener("closed.bs.alert", function () {
+      alertContainer.style.display = "none";
     });
 
-    // controlar o preenchimento do formulário
-    const editButton = document.getElementById("editButton");
-    const saveUserInfoButton = document.getElementById("saveUserInfoButton");
-    const savePasswordButton = document.getElementById("savePasswordButton");
-    const formElements = document.querySelectorAll("#info input, #info select");
-    const alertContainer = document.getElementById("alertContainer");
+    setTimeout(() => {
+      const bsAlert = bootstrap.Alert.getInstance(alertDiv);
+      if (bsAlert) {
+        bsAlert.close();
+      }
+    }, 3000);
+  }
 
-    function toggleForm(editable) {
-      formElements.forEach(element => {
-        element.disabled = !editable;
-      });
-      
-      saveUserInfoButton.style.display = editable ? "inline-block" : "none";
-      editButton.style.display = editable ? "inline-block" : "none";
+  // Botão para salvar informações pessoais
+  saveUserInfoButton.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem("token");
+  const body = {
+    full_name: document.getElementById("fullName").value,
+    username: document.getElementById("nickname").value,
+    gender: document.getElementById("gender").value,
+    birth_date: document.getElementById("birthDate").value,
+  };
+
+  try {
+    const res = await fetch("http://localhost:8000/users/me", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) throw new Error("Erro ao salvar informações.");
+
+    showAlert("Informações pessoais atualizadas com sucesso!");
+    toggleForm(false);
+  } catch (error) {
+    showAlert("Erro ao salvar informações.", "danger");
+  }
+});
+
+  // Botão para salvar nova senha
+  savePasswordButton.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    // Aqui ainda está como simulação, depois você pode adicionar o PATCH para senha
+
+    showAlert("Senha alterada com sucesso!");
+
+    SenhaAtual= document.getElementById("currentPassword")
+    NovaSenha = document.getElementById("newPassword")
+    Confirm_senha= document.getElementById("confirmPassword")
+
+    if(Confirm_senha != SenhaAtual){
+      showAlert("Senha diferentes", "danger");
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      toggleForm(false);
-    });
-
-    editButton.addEventListener("click", () => {
-      toggleForm(true);
-    });
-
-    // sisteminha de alertas
-    function showAlert(message, type = 'success') {
-      alertContainer.innerHTML = '';
-      
-      const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-      alertDiv.setAttribute('role', 'alert');
-      alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      `;
-      
-      alertContainer.appendChild(alertDiv);
-      alertContainer.style.display = "block";
-      
-      new bootstrap.Alert(alertDiv);
-      
-      alertDiv.addEventListener('closed.bs.alert', function () {
-        alertContainer.style.display = "none";
-      });
-      
-      setTimeout(() => {
-        const bsAlert = bootstrap.Alert.getInstance(alertDiv);
-        if (bsAlert) {
-          bsAlert.close();
-        }
-      }, 3000);
-    }
-
-    // salvar informações inseridas
-    saveUserInfoButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      showAlert("Informações pessoais atualizadas com sucesso!");
-      toggleForm(false);
-    });
     
-    // para salvar a senha
-    savePasswordButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      showAlert("Senha alterada com sucesso!");
-      
-      document.getElementById("currentPassword").value = "";
-      document.getElementById("newPassword").value = "";
-      document.getElementById("confirmPassword").value = "";
-    });
+    
+  });
+</script>
 
-  </script>
 
   
 
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-        const token = localStorage.getItem("token");  // Pegando o token armazenado
-  
-        if (!token) {
-            alert("Usuário não autenticado.");
-            return;
-        }
-  
-        try {
-            const response = await fetch("http://localhost:8000/users/me", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-  
-            if (!response.ok) {
-                throw new Error("Falha ao buscar usuário.");
-            }
-  
-            const user = await response.json();
-  
-            // Exibindo as informações do usuário
-            document.getElementById("usernameDisplay").textContent = user.username;
-            document.getElementById("emailDisplay").textContent = user.email;
-  
-        } catch (error) {
-            console.error("Erro ao carregar perfil:", error);
-        }
-    });
-  </script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   
 
 

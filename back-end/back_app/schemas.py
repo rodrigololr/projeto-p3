@@ -17,8 +17,12 @@ class UserSchema(BaseModel):
 class UserPublic(BaseModel):
     id: int
     username: str
-    email: EmailStr
-    model_config = ConfigDict(from_attributes=True)
+    full_name: Optional[str]
+    gender: Optional[str]
+    birth_date: Optional[date]
+
+    class Config:
+        from_attributes = True
 
 
 class UserList(BaseModel):
@@ -51,6 +55,8 @@ class UserOut(BaseModel):
         from_attributes = True
 
 
-class FilterPage(BaseModel):
-    offset: int = 0
-    limit: int = 100
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    gender: Optional[str] = None
+    birth_date: Optional[date] = None
+    username: Optional[str] = None
