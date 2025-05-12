@@ -23,7 +23,6 @@
 
     <!-- estilos personalizados -->
     <style>
-
       main.margin{
         margin-top: 90px !important;
       }
@@ -36,10 +35,8 @@
         display: none;
       }
 
-
       /* ajustes para telas pequenas */
       @media only screen and (max-width: 992px) {
-
         .date{
           display: none;
         }
@@ -86,9 +83,7 @@
           margin-left: auto;
           margin-right: auto;
       }
-
       }
-
     </style>
   </head>
 
@@ -130,7 +125,7 @@
     
           <div style="background-color: #74B3CE; border-radius: 12px; margin: 20px 0;" class="d-flex align-items-center justify-content-center flex-column">
             <h4 class="text-dark py-2">Saldo Geral</h4>
-            <p class="fs-5">R$ 0,00</p>
+            <p id="saldoGeral" class="fs-5">R$ 0,00</p>
           </div>
         </div>
     
@@ -156,8 +151,6 @@
             </button>
           </div>
         </div>
-    
-
       </div>
     
       <!-- Seção Contas e Cartões -->
@@ -205,11 +198,9 @@
               </div>
             </div>
           </div>
-    
         </div>
       </section>
     </div>
-    
     
     <!-- modal receita -->
     <div class="modal fade" id="modalReceita" tabindex="-1" aria-hidden="true">
@@ -280,42 +271,129 @@
       crossorigin="anonymous"
     ></script>
 
-
     <script>
       let receitas = [];
       let despesas = [];
     
-      document.getElementById('btnSalvarReceita').addEventListener('click', () => {
+      // Função pra formatar valores no formato brasileiro (R$ 10.000,00)
+      function formatarValor(valor) {
+        return `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+    
+      // Fetch data from the back-end when the page loads
+      window.onload = async () => {
+        await fetchData();
+        atualizarTotais();
+      };
+    
+      async function fetchData() {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+    
+          const revenueResponse = await fetch('http://localhost:8000/finance/revenues/', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (!revenueResponse.ok) throw new Error(`Erro na resposta do servidor: ${revenueResponse.status}`);
+          receitas = await revenueResponse.json();
+    
+          const expenseResponse = await fetch('http://localhost:8000/finance/expenses/', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (!expenseResponse.ok) throw new Error(`Erro na resposta do servidor: ${expenseResponse.status}`);
+          despesas = await expenseResponse.json();
+        } catch (error) {
+          console.error('Erro ao buscar dados:', error);
+        }
+      }
+    
+      document.getElementById('btnSalvarReceita').addEventListener('click', async () => {
         const nome = document.getElementById('inputNomeReceita').value;
         const valor = parseFloat(document.getElementById('inputValorReceita').value);
         if (nome && !isNaN(valor)) {
-          receitas.push({ nome, valor });
-          atualizarTotais();
-          document.getElementById('inputNomeReceita').value = '';
-          document.getElementById('inputValorReceita').value = '';
-          const modal = bootstrap.Modal.getInstance(document.getElementById('modalReceita'));
-          modal.hide();
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              console.error('Token não encontrado no localStorage. Faça login novamente.');
+              window.location.href = 'login.html';
+              return;
+            }
+    
+            const response = await fetch('http://localhost:8000/finance/revenues/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify({ name: nome, amount: valor }),
+            });
+            if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+            const newRevenue = await response.json();
+            receitas.push(newRevenue);
+            atualizarTotais();
+            document.getElementById('inputNomeReceita').value = '';
+            document.getElementById('inputValorReceita').value = '';
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalReceita'));
+            modal.hide();
+          } catch (error) {
+            console.error('Erro ao salvar receita:', error);
+          }
         }
       });
     
-      document.getElementById('btnSalvarDespesa').addEventListener('click', () => {
+      document.getElementById('btnSalvarDespesa').addEventListener('click', async () => {
         const nome = document.getElementById('inputNomeDespesa').value;
         const valor = parseFloat(document.getElementById('inputValorDespesa').value);
         if (nome && !isNaN(valor)) {
-          despesas.push({ nome, valor });
-          atualizarTotais();
-          document.getElementById('inputNomeDespesa').value = '';
-          document.getElementById('inputValorDespesa').value = '';
-          const modal = bootstrap.Modal.getInstance(document.getElementById('modalDespesa'));
-          modal.hide();
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              console.error('Token não encontrado no localStorage. Faça login novamente.');
+              window.location.href = 'login.html';
+              return;
+            }
+    
+            const response = await fetch('http://localhost:8000/finance/expenses/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify({ name: nome, amount: valor }),
+            });
+            if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+            const newExpense = await response.json();
+            despesas.push(newExpense);
+            atualizarTotais();
+            document.getElementById('inputNomeDespesa').value = '';
+            document.getElementById('inputValorDespesa').value = '';
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalDespesa'));
+            modal.hide();
+          } catch (error) {
+            console.error('Erro ao salvar despesa:', error);
+          }
         }
       });
     
       function atualizarTotais() {
-        const totalReceita = receitas.reduce((acc, r) => acc + r.valor, 0);
-        const totalDespesa = despesas.reduce((acc, d) => acc + d.valor, 0);
-        document.getElementById('valorTotalReceita').textContent = `R$ ${totalReceita.toFixed(2)}`;
-        document.getElementById('valorTotalDespesa').textContent = `R$ ${totalDespesa.toFixed(2)}`;
+        const totalReceita = receitas.reduce((acc, r) => acc + r.amount, 0);
+        const totalDespesa = despesas.reduce((acc, d) => acc + d.amount, 0);
+        const saldo = totalReceita - totalDespesa;
+        document.getElementById('valorTotalReceita').textContent = formatarValor(totalReceita);
+        document.getElementById('valorTotalDespesa').textContent = formatarValor(totalDespesa);
+        document.getElementById('saldoGeral').textContent = formatarValor(saldo);
       }
     
       function abrirListaReceita() {
@@ -323,11 +401,43 @@
         lista.innerHTML = '';
         receitas.forEach(r => {
           const item = document.createElement('li');
-          item.className = 'list-group-item d-flex justify-content-between';
-          item.innerHTML = `<span>${r.nome}</span><span>R$ ${r.valor.toFixed(2)}</span>`;
+          item.className = 'list-group-item d-flex justify-content-between align-items-center';
+          item.innerHTML = `
+            <span>${r.name}</span>
+            <span>
+              ${formatarValor(r.amount)}
+              <button class="btn btn-sm btn-danger ms-2" onclick="deletarReceita(${r.id})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </span>`;
           lista.appendChild(item);
         });
         new bootstrap.Modal(document.getElementById('modalListaReceita')).show();
+      }
+    
+      async function deletarReceita(id) {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+    
+          const response = await fetch(`http://localhost:8000/finance/revenues/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          receitas = receitas.filter(r => r.id !== id);
+          atualizarTotais();
+          abrirListaReceita(); // Atualiza a lista
+        } catch (error) {
+          console.error('Erro ao deletar receita:', error);
+        }
       }
     
       function abrirListaDespesa() {
@@ -335,11 +445,43 @@
         lista.innerHTML = '';
         despesas.forEach(d => {
           const item = document.createElement('li');
-          item.className = 'list-group-item d-flex justify-content-between';
-          item.innerHTML = `<span>${d.nome}</span><span>R$ ${d.valor.toFixed(2)}</span>`;
+          item.className = 'list-group-item d-flex justify-content-between align-items-center';
+          item.innerHTML = `
+            <span>${d.name}</span>
+            <span>
+              ${formatarValor(d.amount)}
+              <button class="btn btn-sm btn-danger ms-2" onclick="deletarDespesa(${d.id})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </span>`;
           lista.appendChild(item);
         });
         new bootstrap.Modal(document.getElementById('modalListaDespesa')).show();
+      }
+    
+      async function deletarDespesa(id) {
+        try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            console.error('Token não encontrado no localStorage. Faça login novamente.');
+            window.location.href = 'login.html';
+            return;
+          }
+    
+          const response = await fetch(`http://localhost:8000/finance/expenses/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          despesas = despesas.filter(d => d.id !== id);
+          atualizarTotais();
+          abrirListaDespesa(); // Atualiza a lista
+        } catch (error) {
+          console.error('Erro ao deletar despesa:', error);
+        }
       }
     </script>
   </body>
