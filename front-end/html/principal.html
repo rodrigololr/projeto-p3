@@ -104,7 +104,7 @@
             </div>
           </div>
           <div class="date">
-            <span class="px-3 py-1 rounded-2 text-white" style="background-color: #508991;">Jun, 10, 2024</span>
+            <span id="currentDate" class="px-3 py-1 rounded-2 text-white" style="background-color: #508991;">May, 13, 2025</span>
           </div>
         </div>
       </div>
@@ -285,12 +285,20 @@
         return `R$ ${valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       }
 
+      // Função para formatar e exibir a data atual
+      function exibirDataAtual() {
+        const hoje = new Date();
+        const opcoes = { month: 'short', day: '2-digit', year: 'numeric' };
+        const dataFormatada = hoje.toLocaleDateString('en-US', opcoes).replace(/(\w{3}) (\d{2}), (\d{4})/, '$1, $2, $3');
+        document.getElementById('currentDate').textContent = dataFormatada;
+      }
+
       window.onload = async () => {
         await fetchData();
         await fetchGoals();
-        await fetchBalance();
         atualizarTotais();
         preencherTags();
+        exibirDataAtual();
       };
 
       async function fetchData() {
@@ -313,7 +321,7 @@
             method: 'GET',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           });
-          if (!expenseResponse.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
+          if (!expenseResponse.ok) throw new Error(`Erro na resposta do servidor: ${expenseResponse.status}`);
           despesas = await expenseResponse.json();
         } catch (error) {
           console.error('Erro ao buscar dados:', error);
@@ -340,27 +348,6 @@
           });
         } catch (error) {
           console.error('Erro ao buscar metas:', error);
-        }
-      }
-
-      async function fetchBalance() {
-        try {
-          const token = localStorage.getItem('token');
-          if (!token) {
-            console.error('Token não encontrado no localStorage. Faça login novamente.');
-            window.location.href = 'login.html';
-            return;
-          }
-
-          const response = await fetch('http://localhost:8000/finance/balance/', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          });
-          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
-          const balance = await response.json();
-          document.getElementById('saldoGeral').textContent = formatarValor(balance);
-        } catch (error) {
-          console.error('Erro ao buscar saldo:', error);
         }
       }
 
@@ -395,7 +382,6 @@
             if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
             const newRevenue = await response.json();
             receitas.push(newRevenue);
-            await fetchBalance(); // Atualiza saldo
             atualizarTotais();
             document.getElementById('inputNomeReceita').value = '';
             document.getElementById('inputValorReceita').value = '';
@@ -429,7 +415,6 @@
             if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
             const newExpense = await response.json();
             despesas.push(newExpense);
-            await fetchBalance(); // Atualiza saldo
             atualizarTotais();
             document.getElementById('inputNomeDespesa').value = '';
             document.getElementById('inputValorDespesa').value = '';
@@ -445,9 +430,11 @@
       function atualizarTotais() {
         const totalReceita = receitas.reduce((acc, r) => acc + r.amount, 0);
         const totalDespesa = despesas.reduce((acc, d) => acc + d.amount, 0);
+        const saldo = totalReceita - totalDespesa;
+
         document.getElementById('valorTotalReceita').textContent = formatarValor(totalReceita);
         document.getElementById('valorTotalDespesa').textContent = formatarValor(totalDespesa);
-        // O saldo geral agora é buscado do banco
+        document.getElementById('saldoGeral').textContent = formatarValor(saldo);
       }
 
       function abrirListaReceita() {
@@ -484,7 +471,6 @@
           });
           if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
           receitas = receitas.filter(r => r.id !== id);
-          await fetchBalance(); // Atualiza saldo
           atualizarTotais();
           abrirListaReceita();
         } catch (error) {
@@ -526,7 +512,6 @@
           });
           if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
           despesas = despesas.filter(d => d.id !== id);
-          await fetchBalance(); // Atualiza saldo
           atualizarTotais();
           abrirListaDespesa();
         } catch (error) {
@@ -536,36 +521,34 @@
     </script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-        const token = localStorage.getItem("token");  // Pegando o token armazenado
-  
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("token");
+
         if (!token) {
-            alert("Usuário não autenticado.");
-            return;
+          alert("Usuário não autenticado.");
+          return;
         }
-  
+
         try {
-            const response = await fetch("http://localhost:8000/users/me", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-  
-            if (!response.ok) {
-                throw new Error("Falha ao buscar usuário.");
-            }
-  
-            const user = await response.json();
-  
-            // Exibindo as informações do usuário
-            document.getElementById("usernameDisplay").textContent = "Bom dia, " + user.username;
-  
+          const response = await fetch("http://localhost:8000/users/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Falha ao buscar usuário.");
+          }
+
+          const user = await response.json();
+
+          // Exibindo as informações do usuário
+          document.getElementById("usernameDisplay").textContent = "Bom dia, " + user.username;
+
         } catch (error) {
-            console.error("Erro ao carregar perfil:", error);
+          console.error("Erro ao carregar perfil:", error);
         }
-    });
-
-  </script>
-
+      });
+    </script>
   </body>
 </html>
