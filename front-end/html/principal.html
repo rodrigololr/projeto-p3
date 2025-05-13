@@ -100,7 +100,7 @@
           <div class="d-flex align-items-center">
             <img src="../imgs/boneco.svg" alt="Usuário" width="40" class="me-3" />
             <div>
-              <span class="fw-semibold" style="font-size: 15px;">Bom dia, Rodrigo</span>
+              <span class="fw-semibold" style="font-size: 15px;" id="usernameDisplay">Bom dia, Rodrigo</span>
             </div>
           </div>
           <div class="date">
@@ -534,5 +534,38 @@
         }
       }
     </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("token");  // Pegando o token armazenado
+  
+        if (!token) {
+            alert("Usuário não autenticado.");
+            return;
+        }
+  
+        try {
+            const response = await fetch("http://localhost:8000/users/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+  
+            if (!response.ok) {
+                throw new Error("Falha ao buscar usuário.");
+            }
+  
+            const user = await response.json();
+  
+            // Exibindo as informações do usuário
+            document.getElementById("usernameDisplay").textContent = "Bom dia, " + user.username;
+  
+        } catch (error) {
+            console.error("Erro ao carregar perfil:", error);
+        }
+    });
+
+  </script>
+
   </body>
 </html>

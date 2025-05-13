@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm  # type: ignore
 from sqlalchemy import select  # type: ignore
 from sqlalchemy.exc import IntegrityError  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
+from datetime import datetime
 
 from back_app.database import get_session
 from back_app.models import User
@@ -16,6 +17,9 @@ from back_app.schemas import (
     UserOut,
     UserPublic,
     UserSchema,
+    UserOut,
+    UserUpdate
+
 )
 from back_app.security import (
     create_access_token,
@@ -75,7 +79,7 @@ def login(
             headers={'WWW-Authenticate': 'Bearer'},
         )
 
-    # Cria token JWT com o e-mail como subject (sub)
+    # cria token JWT com o e-mail como subject (sub)
     access_token = create_access_token(data={'sub': user.email})
     return {'access_token': access_token, 'token_type': 'bearer'}
 
@@ -85,30 +89,30 @@ def get_user_info(current_user: User = Depends(get_current_user)):
     return current_user
 
 
-@router.put('/{user_id}', response_model=UserPublic)
+@router.patch("/me", response_model=UserPublic)
 def update_user(
-    user_id: int,
-    user: UserSchema,
+    user: UserUpdate,
     session: T_Session,  # type: ignore
     current_user: T_CurrentUser,
 ):
-    if current_user.id != user_id:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
-        )
     try:
-        current_user.username = user.username
-        current_user.password = get_password_hash(user.password)
-        current_user.email = user.email
+        if user.birth_date and isinstance(user.birth_date, str):
+            user.birth_date = datetime.strptime(
+                user.birth_date, "%Y-%m-%d").date()
+
+        for field, value in user.dict(exclude_unset=True).items():
+            setattr(current_user, field, value)
+
         session.commit()
         session.refresh(current_user)
 
         return current_user
 
     except IntegrityError:
+        session.rollback()
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
-            detail='Username or Email already exists',
+            detail="Username already exists",
         )
 
 

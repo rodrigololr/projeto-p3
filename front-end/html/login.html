@@ -248,7 +248,7 @@
             const password = document.querySelector('input[type="password"]').value;
 
             const body = new URLSearchParams();
-            body.append('username', email); 
+            body.append('username', email);
             body.append('password', password);
 
             const response = await fetch('http://localhost:8000/auth/token', {  // Alterei para /auth/token
