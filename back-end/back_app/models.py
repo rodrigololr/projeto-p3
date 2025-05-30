@@ -42,6 +42,7 @@ class Revenue:
     name: Mapped[str]
     amount: Mapped[float]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    identificador: Mapped[str] = mapped_column(unique=True)  # 👈 adicionado
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
@@ -55,9 +56,11 @@ class Expense:
     amount: Mapped[float]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     tag: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    identificador: Mapped[str] = mapped_column(unique=True)  # 👈 adicionado
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+
 
 @table_registry.mapped_as_dataclass
 class Goal:

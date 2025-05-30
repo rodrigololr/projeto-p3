@@ -4,12 +4,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import Depends, HTTPException  # type: ignore
 from fastapi.security import OAuth2PasswordBearer  # type: ignore
-from jwt import (  # type: ignore
-    DecodeError,
-    ExpiredSignatureError,
-    decode,
-    encode,
-)
+from jwt import DecodeError, ExpiredSignatureError, decode, encode  # type: ignore
 from pwdlib import PasswordHash  # type: ignore
 from sqlalchemy import select  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
@@ -29,11 +24,11 @@ def create_access_token(data: dict):
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
-    to_encode.update({'exp': expire})
-    encoded_jwt = encode(
-        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
-    )
-    return encoded_jwt
+    to_encode.update({
+        'exp': expire,
+        'sub': data.get("sub")  # garante que sub esteja no token
+    })
+    return encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 
 def get_password_hash(password: str):
@@ -42,6 +37,15 @@ def get_password_hash(password: str):
 
 def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
+
+
+def authenticate_user(session: Session, email: str, password: str):
+    user = session.scalar(select(User).where(User.email == email))
+    if not user:
+        return None
+    if not verify_password(password, user.password):
+        return None
+    return user
 
 
 def get_current_user(
@@ -63,10 +67,7 @@ def get_current_user(
         if not subject_email:
             raise credentials_exception
 
-    except DecodeError:
-        raise credentials_exception
-
-    except ExpiredSignatureError:
+    except (DecodeError, ExpiredSignatureError):
         raise credentials_exception
 
     user = session.scalar(select(User).where(User.email == subject_email))
