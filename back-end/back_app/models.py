@@ -1,5 +1,7 @@
 from datetime import datetime
+from dataclasses import field
 from typing import Optional
+import uuid
 
 from sqlalchemy import (
     Column,
@@ -42,10 +44,14 @@ class Revenue:
     name: Mapped[str]
     amount: Mapped[float]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    identificador: Mapped[str] = mapped_column(unique=True)  # 👈 adicionado
+    identificador: Mapped[str] = mapped_column(unique=True, default=None)  # default=None no SQLAlchemy
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+
+    # Adiciona valor padrão via dataclass
+    identificador: str = field(default_factory=lambda: str(uuid.uuid4()))
+
 
 @table_registry.mapped_as_dataclass
 class Expense:
@@ -56,11 +62,13 @@ class Expense:
     amount: Mapped[float]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     tag: Mapped[Optional[str]] = mapped_column(String, nullable=True)
-    identificador: Mapped[str] = mapped_column(unique=True)  # 👈 adicionado
+    identificador: Mapped[str] = mapped_column(unique=True, default=None)  # default=None no SQLAlchemy
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
 
+    # Adiciona valor padrão via dataclass
+    identificador: str = field(default_factory=lambda: str(uuid.uuid4()))
 
 @table_registry.mapped_as_dataclass
 class Goal:
