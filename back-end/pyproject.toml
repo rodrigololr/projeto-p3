@@ -1,30 +1,26 @@
-[project]
+[tool.poetry]
 name = "back-app"
 version = "0.1.0"
-description = ""
+description = "A financial management application"
 authors = [
-    {name = "lucasqtl",email = "lucasquintela04@gmail.com"},
-    {name = "Rodrigo Lima",email = "rodrigotenorio2005@gmail.com"}
+    "lucasqtl <lucasquintela04@gmail.com>",
+    "Rodrigo Lima <rodrigotenorio2005@gmail.com>"
 ]
-readme = "README.md"
-requires-python = ">=3.13,<4.0"
-dependencies = [
-    "fastapi[standard] (>=0.115.11,<0.116.0)",
-    "sqlalchemy[asyncio] (>=2.0.40,<3.0.0)",
-    "pydantic-settings (>=2.8.1,<3.0.0)",
-    "alembic (>=1.15.2,<2.0.0)",
-    "pyjwt (>=2.10.1,<3.0.0)",
-    "tzdata (>=2025.2,<2026.0)",
-    "pwdlib[argon2] (>=0.2.1,<0.3.0)",
-    "aiosqlite (>=0.21.0,<0.22.0)"
-]
+package-mode = false
 
+[tool.poetry.dependencies]
+python = ">=3.13,<4.0"
+fastapi = { version = ">=0.115.11,<0.116.0", extras = ["standard"] }
+sqlalchemy = { version = ">=2.0.40,<3.0.0", extras = ["asyncio"] }
+pydantic-settings = ">=2.8.1,<3.0.0"
+alembic = ">=1.15.2,<2.0.0"
+pyjwt = ">=2.10.1,<3.0.0"
+tzdata = ">=2025.2,<2026.0"
+pwdlib = { version = ">=0.2.1,<0.3.0", extras = ["argon2"] }
+aiosqlite = ">=0.21.0,<0.22.0"
+google-generativeai = ">=0.8.3,<0.9.0"
 
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.group.dev.dependencies]
+[tool.poetry.group.dev.dependencies]  # Ajustado pra nova sintaxe
 ruff = "^0.9.9"
 pytest = "^8.3.5"
 pytest-cov = "^6.0.0"
@@ -33,27 +29,30 @@ pytest-asyncio = "^0.26.0"
 factory-boy = "^3.3.3"
 freezegun = "^1.5.1"
 
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.ruff]
 line-length = 79
-extend-exclude = ['migrations']
+extend-exclude = ["migrations"]
 
 [tool.ruff.lint]
 preview = true
-select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+select = ["I", "F", "E", "W", "PL", "PT"]
 
 [tool.ruff.format]
 preview = true
-quote-style = 'single'
+quote-style = "single"
 
 [tool.pytest.ini_options]
 pythonpath = "."
-addopts = '-p no:warnings'
-
+addopts = "-p no:warnings"
 
 [tool.taskipy.tasks]
-lint = 'ruff check . && ruff check . --diff'
-format = 'ruff format . && ruff check --fix .'
-run = 'uvicorn back_app.main:app --reload'
-pre_test = 'task lint'
-test = 'pytest -s --cov=back_app -vv'
-post_test = 'coverage html'
+lint = "ruff check . && ruff check . --diff"
+format = "ruff format . && ruff check --fix ."
+run = "uvicorn back_app.main:app --reload"
+pre_test = "task lint"
+test = "pytest -s --cov=back_app -vv"
+post_test = "coverage html"
