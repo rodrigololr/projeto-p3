@@ -116,18 +116,28 @@ def update_user(
         )
 
 
-@router.delete('/{user_id}', response_model=Message)
-def delete_user(
-    user_id: int,
-    session: T_Session,  # type: ignore
+@router.delete('/me', response_model=Message)
+def delete_current_user(
+    session: T_Session,
     current_user: T_CurrentUser,
 ):
-    if current_user.id != user_id:
+    """
+    Deleta a conta do usuário atual e todos os dados associados
+    (revenues, expenses, goals).
+    """
+    try:
+        # O SQLAlchemy com cascade="all, delete-orphan" vai automaticamente
+        # deletar todos os registros relacionados
+        session.delete(current_user)
+        session.commit()
+        
+        return {'message': 'Account successfully deleted'}
+        
+    except Exception as e:
+        session.rollback()
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail=f'Error deleting account: {str(e)}'
         )
 
-    session.delete(current_user)
-    session.commit()
 
-    return {'message': 'User deleted'}

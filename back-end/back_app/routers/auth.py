@@ -43,4 +43,3 @@ def refresh_access_token(user: T_CurrentUser):
 
     return {'access_token': new_access_token, 'token_type': 'bearer'}
 
-
