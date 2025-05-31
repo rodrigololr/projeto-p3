@@ -2,12 +2,12 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 from zoneinfo import ZoneInfo
 
-from fastapi import Depends, HTTPException  # type: ignore
-from fastapi.security import OAuth2PasswordBearer  # type: ignore
-from jwt import DecodeError, ExpiredSignatureError, decode, encode  # type: ignore
-from pwdlib import PasswordHash  # type: ignore
-from sqlalchemy import select  # type: ignore
-from sqlalchemy.orm import Session  # type: ignore
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jwt import DecodeError, ExpiredSignatureError, decode, encode
+from pwdlib import PasswordHash
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from back_app.database import get_session
 from back_app.models import User
@@ -50,29 +50,31 @@ def authenticate_user(session: Session, email: str, password: str):
 
 def get_current_user(
     session: Session = Depends(get_session),
-    token: str = Depends(oauth2_scheme),
+    token: str = Depends(oauth2_scheme)
 ):
     credentials_exception = HTTPException(
-        status_code=HTTPStatus.UNAUTHORIZED,
+        status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Could not validate credentials',
         headers={'WWW-Authenticate': 'Bearer'},
     )
 
     try:
-        payload = decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
-        subject_email = payload.get('sub')
+        payload = decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        username: str = payload.get('sub')
 
-        if not subject_email:
+        # print(f"DEBUG - Email do token: {username}")
+
+        if username is None:
             raise credentials_exception
 
     except (DecodeError, ExpiredSignatureError):
         raise credentials_exception
 
-    user = session.scalar(select(User).where(User.email == subject_email))
+    user = session.scalar(select(User).where(User.email == username))
 
-    if not user:
+    # print(f"DEBUG - Usuário encontrado: id={user.id if user else 'None'}, email={user.email if user else 'None'}")
+
+    if user is None:
         raise credentials_exception
 
     return user

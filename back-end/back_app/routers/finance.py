@@ -1,3 +1,4 @@
+# finance.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -14,14 +15,7 @@ router = APIRouter(
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
-def get_db():
-    db = next(get_session())
-    try:
-        yield db
-    finally:
-        db.close()
-
-# Função temporária pra inicializar metas padrão
+# Função temporária para inicializar metas padrão
 def initialize_default_goals(db: Session, user_id: int):
     default_goals = [
         models.Goal(name="Poupança", amount=1000.0, user_id=user_id, tag="Poupança"),
@@ -33,9 +27,10 @@ def initialize_default_goals(db: Session, user_id: int):
 @router.post("/revenues/", response_model=schemas.RevenueOut)
 async def create_revenue(
     revenue: schemas.RevenueCreate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
+    print(f"DEBUG: Criando receita para user_id: {current_user.id}")
     db_revenue = models.Revenue(name=revenue.name, amount=revenue.amount, user_id=current_user.id)
     db.add(db_revenue)
     db.commit()
@@ -46,16 +41,18 @@ async def create_revenue(
 
 @router.get("/revenues/", response_model=List[schemas.RevenueOut])
 async def get_revenues(
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
+    # print(f"DEBUG: Buscando receitas para user_id: {current_user.id}")
     revenues = db.query(models.Revenue).filter(models.Revenue.user_id == current_user.id).all()
+    # print(f"DEBUG: Encontradas {len(revenues)} receitas")
     return revenues
 
 @router.delete("/revenues/{revenue_id}", response_model=schemas.Message)
 async def delete_revenue(
     revenue_id: int,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
     revenue = db.query(models.Revenue).filter(
@@ -72,9 +69,10 @@ async def delete_revenue(
 @router.post("/expenses/", response_model=schemas.ExpenseOut)
 async def create_expense(
     expense: schemas.ExpenseCreateWithTag,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
+    print(f"DEBUG: Criando despesa para user_id: {current_user.id}")
     db_expense = models.Expense(name=expense.name, amount=expense.amount, user_id=current_user.id, tag=expense.tag)
     db.add(db_expense)
     db.commit()
@@ -85,16 +83,18 @@ async def create_expense(
 
 @router.get("/expenses/", response_model=List[schemas.ExpenseOut])
 async def get_expenses(
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
+    # print(f"DEBUG: Buscando despesas para user_id: {current_user.id}")
     expenses = db.query(models.Expense).filter(models.Expense.user_id == current_user.id).all()
+    # print(f"DEBUG: Encontradas {len(expenses)} despesas")
     return expenses
 
 @router.delete("/expenses/{expense_id}", response_model=schemas.Message)
 async def delete_expense(
     expense_id: int,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
     expense = db.query(models.Expense).filter(
@@ -102,7 +102,7 @@ async def delete_expense(
         models.Expense.user_id == current_user.id
     ).first()
     if not expense:
-        raise HTTPException(status_code=404, detail="Despesa não encontrada")
+        raise HTTPException(status_code=404, detail="Despesa não encontrado")
     current_user.total_balance += expense.amount
     db.delete(expense)
     db.commit()
@@ -111,10 +111,10 @@ async def delete_expense(
 @router.post("/goals/", response_model=schemas.GoalOut)
 async def create_goal(
     goal: schemas.GoalCreate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
-    db_goal = models.Goal(name=goal.name, amount=goal.amount, user_id=current_user.id, tag=goal.tag)  # Usando o tag do schema
+    db_goal = models.Goal(name=goal.name, amount=goal.amount, user_id=current_user.id, tag=goal.tag)
     db.add(db_goal)
     db.commit()
     db.refresh(db_goal)
@@ -122,7 +122,7 @@ async def create_goal(
 
 @router.get("/goals/", response_model=List[schemas.GoalOut])
 async def get_goals(
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
     goals = db.query(models.Goal).filter(models.Goal.user_id == current_user.id).all()
@@ -132,7 +132,7 @@ async def get_goals(
 async def update_goal(
     goal_id: int,
     goal: schemas.GoalCreate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
     db_goal = db.query(models.Goal).filter(
@@ -151,7 +151,7 @@ async def update_goal(
 @router.delete("/goals/{goal_id}", response_model=schemas.Message)
 async def delete_goal(
     goal_id: int,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
     goal = db.query(models.Goal).filter(
@@ -160,32 +160,17 @@ async def delete_goal(
     ).first()
     if not goal:
         raise HTTPException(status_code=404, detail="Meta não encontrada")
-    db.query(models.Expense).filter(models.Expense.tag == goal.tag, models.Expense.user_id == current_user.id).update({"tag": None})
+    db.query(models.Expense).filter(
+        models.Expense.tag == goal.tag,
+        models.Expense.user_id == current_user.id
+    ).update({"tag": None})
     db.delete(goal)
     db.commit()
     return {"message": "Meta deletada com sucesso"}
 
 @router.get("/balance/", response_model=float)
 async def get_balance(
-    db: Session = Depends(get_db),
-    current_user: models.User = Depends(get_current_user)
-):
-    return current_user.total_balance
-
-@router.put("/goals/{goal_id}", response_model=schemas.GoalOut)
-def update_goal(
-    goal_id: int,
-    goal: schemas.GoalCreate,
     db: Session = Depends(get_session),
     current_user: models.User = Depends(get_current_user)
 ):
-    db_goal = db.query(models.Goal).filter(models.Goal.id == goal_id, models.Goal.user_id == current_user.id).first()
-    if not db_goal:
-        raise HTTPException(status_code=404, detail="Meta não encontrada")
-    
-    db_goal.name = goal.name
-    db_goal.amount = goal.amount
-    db_goal.tag = goal.tag
-    db.commit()
-    db.refresh(db_goal)
-    return db_goal
+    return current_user.total_balance
