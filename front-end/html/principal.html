@@ -85,6 +85,21 @@
           margin-right: auto;
         }
       }
+
+      /* Estilos para seleção múltipla */
+      .checkbox-item {
+        margin-right: 10px;
+      }
+
+      .delete-actions {
+        border-top: 1px solid #dee2e6;
+        padding-top: 15px;
+        margin-top: 15px;
+      }
+
+      .select-all-checkbox {
+        margin-bottom: 10px;
+      }
     </style>
   </head>
 
@@ -243,20 +258,54 @@
 
     <!-- modal lista receita -->
     <div class="modal fade" id="modalListaReceita" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content p-3">
           <h5 class="modal-title mb-3">Lista de Receitas</h5>
+          
+          <div class="select-all-checkbox">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="selectAllReceitas" onchange="toggleAllReceitas()">
+              <label class="form-check-label" for="selectAllReceitas">
+                Selecionar todas
+              </label>
+            </div>
+          </div>
+
           <ul id="listaReceita" class="list-group"></ul>
+
+          <div class="delete-actions">
+            <button id="btnDeletarReceitasSelecionadas" class="btn btn-danger" onclick="deletarReceitasSelecionadas()" disabled>
+              <i class="bi bi-trash"></i> Deletar Selecionadas
+            </button>
+            <span id="contadorReceitas" class="ms-3 text-muted">0 selecionadas</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- modal lista despesa -->
     <div class="modal fade" id="modalListaDespesa" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content p-3">
           <h5 class="modal-title mb-3">Lista de Despesas</h5>
+          
+          <div class="select-all-checkbox">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="selectAllDespesas" onchange="toggleAllDespesas()">
+              <label class="form-check-label" for="selectAllDespesas">
+                Selecionar todas
+              </label>
+            </div>
+          </div>
+
           <ul id="listaDespesa" class="list-group"></ul>
+
+          <div class="delete-actions">
+            <button id="btnDeletarDespesasSelecionadas" class="btn btn-danger" onclick="deletarDespesasSelecionadas()" disabled>
+              <i class="bi bi-trash"></i> Deletar Selecionadas
+            </button>
+            <span id="contadorDespesas" class="ms-3 text-muted">0 selecionadas</span>
+          </div>
         </div>
       </div>
     </div>
@@ -437,6 +486,7 @@
         document.getElementById('saldoGeral').textContent = formatarValor(saldo);
       }
 
+      // Funções para receitas
       function abrirListaReceita() {
         const lista = document.getElementById('listaReceita');
         lista.innerHTML = '';
@@ -444,19 +494,58 @@
           const item = document.createElement('li');
           item.className = 'list-group-item d-flex justify-content-between align-items-center';
           item.innerHTML = `
-            <span>${r.name}</span>
-            <span>
-              ${formatarValor(r.amount)}
-              <button class="btn btn-sm btn-danger ms-2" onclick="deletarReceita(${r.id})">
-                <i class="bi bi-trash"></i>
-              </button>
-            </span>`;
+            <div class="d-flex align-items-center">
+              <input class="form-check-input checkbox-item me-2" type="checkbox" value="${r.id}" onchange="atualizarContadorReceitas()">
+              <span>${r.name}</span>
+            </div>
+            <span>${formatarValor(r.amount)}</span>`;
           lista.appendChild(item);
         });
+        
+        // Reset selections
+        document.getElementById('selectAllReceitas').checked = false;
+        atualizarContadorReceitas();
+        
         new bootstrap.Modal(document.getElementById('modalListaReceita')).show();
       }
 
-      async function deletarReceita(id) {
+      function toggleAllReceitas() {
+        const selectAll = document.getElementById('selectAllReceitas');
+        const checkboxes = document.querySelectorAll('#listaReceita input[type="checkbox"]');
+        
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = selectAll.checked;
+        });
+        
+        atualizarContadorReceitas();
+      }
+
+      function atualizarContadorReceitas() {
+        const checkboxes = document.querySelectorAll('#listaReceita input[type="checkbox"]:checked');
+        const count = checkboxes.length;
+        const contador = document.getElementById('contadorReceitas');
+        const btnDeletar = document.getElementById('btnDeletarReceitasSelecionadas');
+        
+        contador.textContent = `${count} selecionada${count !== 1 ? 's' : ''}`;
+        btnDeletar.disabled = count === 0;
+        
+        // Atualizar o checkbox "selecionar todas"
+        const totalCheckboxes = document.querySelectorAll('#listaReceita input[type="checkbox"]').length;
+        const selectAllCheckbox = document.getElementById('selectAllReceitas');
+        selectAllCheckbox.indeterminate = count > 0 && count < totalCheckboxes;
+        selectAllCheckbox.checked = count === totalCheckboxes && totalCheckboxes > 0;
+      }
+
+      async function deletarReceitasSelecionadas() {
+        const checkboxes = document.querySelectorAll('#listaReceita input[type="checkbox"]:checked');
+        const ids = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        
+        if (ids.length === 0) return;
+        
+        if (!confirm(`Tem certeza que deseja deletar ${ids.length} receita${ids.length !== 1 ? 's' : ''}?`)) {
+          return;
+        }
+
         try {
           const token = localStorage.getItem('token');
           if (!token) {
@@ -465,19 +554,34 @@
             return;
           }
 
-          const response = await fetch(`http://localhost:8000/finance/revenues/${id}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          });
-          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
-          receitas = receitas.filter(r => r.id !== id);
+          // Deletar todas as receitas selecionadas
+          const deletePromises = ids.map(id => 
+            fetch(`http://localhost:8000/finance/revenues/${id}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            })
+          );
+
+          const responses = await Promise.all(deletePromises);
+          
+          // Verificar se todas as requisições foram bem-sucedidas
+          const failedDeletes = responses.filter(response => !response.ok);
+          if (failedDeletes.length > 0) {
+            throw new Error(`Erro ao deletar ${failedDeletes.length} receita(s)`);
+          }
+
+          // Remover as receitas deletadas da lista local
+          receitas = receitas.filter(r => !ids.includes(r.id));
           atualizarTotais();
-          abrirListaReceita();
+          abrirListaReceita(); // Reabrir a lista atualizada
+          
         } catch (error) {
-          console.error('Erro ao deletar receita:', error);
+          console.error('Erro ao deletar receitas:', error);
+          alert('Erro ao deletar receitas. Tente novamente.');
         }
       }
 
+      // Funções para despesas
       function abrirListaDespesa() {
         const lista = document.getElementById('listaDespesa');
         lista.innerHTML = '';
@@ -485,19 +589,58 @@
           const item = document.createElement('li');
           item.className = 'list-group-item d-flex justify-content-between align-items-center';
           item.innerHTML = `
-            <span>${d.name} (Tag: ${d.tag || 'Sem tag'})</span>
-            <span>
-              ${formatarValor(d.amount)}
-              <button class="btn btn-sm btn-danger ms-2" onclick="deletarDespesa(${d.id})">
-                <i class="bi bi-trash"></i>
-              </button>
-            </span>`;
+            <div class="d-flex align-items-center">
+              <input class="form-check-input checkbox-item me-2" type="checkbox" value="${d.id}" onchange="atualizarContadorDespesas()">
+              <span>${d.name} ${d.tag ? `(Tag: ${d.tag})` : '(Sem tag)'}</span>
+            </div>
+            <span>${formatarValor(d.amount)}</span>`;
           lista.appendChild(item);
         });
+        
+        // Reset selections
+        document.getElementById('selectAllDespesas').checked = false;
+        atualizarContadorDespesas();
+        
         new bootstrap.Modal(document.getElementById('modalListaDespesa')).show();
       }
 
-      async function deletarDespesa(id) {
+      function toggleAllDespesas() {
+        const selectAll = document.getElementById('selectAllDespesas');
+        const checkboxes = document.querySelectorAll('#listaDespesa input[type="checkbox"]');
+        
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = selectAll.checked;
+        });
+        
+        atualizarContadorDespesas();
+      }
+
+      function atualizarContadorDespesas() {
+        const checkboxes = document.querySelectorAll('#listaDespesa input[type="checkbox"]:checked');
+        const count = checkboxes.length;
+        const contador = document.getElementById('contadorDespesas');
+        const btnDeletar = document.getElementById('btnDeletarDespesasSelecionadas');
+        
+        contador.textContent = `${count} selecionada${count !== 1 ? 's' : ''}`;
+        btnDeletar.disabled = count === 0;
+        
+        // Atualizar o checkbox "selecionar todas"
+        const totalCheckboxes = document.querySelectorAll('#listaDespesa input[type="checkbox"]').length;
+        const selectAllCheckbox = document.getElementById('selectAllDespesas');
+        selectAllCheckbox.indeterminate = count > 0 && count < totalCheckboxes;
+        selectAllCheckbox.checked = count === totalCheckboxes && totalCheckboxes > 0;
+      }
+
+      async function deletarDespesasSelecionadas() {
+        const checkboxes = document.querySelectorAll('#listaDespesa input[type="checkbox"]:checked');
+        const ids = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        
+        if (ids.length === 0) return;
+        
+        if (!confirm(`Tem certeza que deseja deletar ${ids.length} despesa${ids.length !== 1 ? 's' : ''}?`)) {
+          return;
+        }
+
         try {
           const token = localStorage.getItem('token');
           if (!token) {
@@ -506,16 +649,30 @@
             return;
           }
 
-          const response = await fetch(`http://localhost:8000/finance/expenses/${id}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          });
-          if (!response.ok) throw new Error(`Erro na resposta do servidor: ${response.status}`);
-          despesas = despesas.filter(d => d.id !== id);
+          // Deletar todas as despesas selecionadas
+          const deletePromises = ids.map(id => 
+            fetch(`http://localhost:8000/finance/expenses/${id}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            })
+          );
+
+          const responses = await Promise.all(deletePromises);
+          
+          // Verificar se todas as requisições foram bem-sucedidas
+          const failedDeletes = responses.filter(response => !response.ok);
+          if (failedDeletes.length > 0) {
+            throw new Error(`Erro ao deletar ${failedDeletes.length} despesa(s)`);
+          }
+
+          // Remover as despesas deletadas da lista local
+          despesas = despesas.filter(d => !ids.includes(d.id));
           atualizarTotais();
-          abrirListaDespesa();
+          abrirListaDespesa(); // Reabrir a lista atualizada
+          
         } catch (error) {
-          console.error('Erro ao deletar despesa:', error);
+          console.error('Erro ao deletar despesas:', error);
+          alert('Erro ao deletar despesas. Tente novamente.');
         }
       }
 

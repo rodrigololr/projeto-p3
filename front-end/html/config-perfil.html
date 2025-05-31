@@ -399,8 +399,11 @@
             </div>
 
             <div class="text-end mt-4">
-              <button id="savePasswordButton" class="btn btn-success px-4">Atualizar senha</button>
+              <button id="savePasswordButton" class="btn btn-success px-4 mb-2">Atualizar senha</button><br>
+              <button id="deleteAccountButton" class="btn btn-danger px-4">Deletar Conta</button>
             </div>
+
+
           </div>
         </div>
         
@@ -567,6 +570,42 @@
 
     
   });
+
+  // Botão para deletar conta
+const deleteAccountButton = document.getElementById("deleteAccountButton");
+
+deleteAccountButton.addEventListener("click", async () => {
+  const confirmDelete = confirm("Tem certeza que deseja deletar sua conta? Essa ação é irreversível.");
+
+  if (!confirmDelete) return;
+
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch("http://localhost:8000/users/me", {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Erro ao deletar a conta.");
+    }
+
+    showAlert("Conta deletada com sucesso!", "success");
+
+    // Limpar token e redirecionar
+    localStorage.removeItem("token");
+    setTimeout(() => {
+      window.location.href = "/login.html"; // ajuste conforme sua rota de login
+    }, 1500);
+  } catch (error) {
+    console.error(error);
+    showAlert("Erro ao deletar a conta.", "danger");
+  }
+});
+
 </script>
 
 
