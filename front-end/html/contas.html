@@ -213,177 +213,310 @@
   </div>
 
   <!-- Scripts do Bootstrap -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Lista de ícones disponíveis
+    // Lista de ícones disponíveis (pode manter como está)
     const icones = [
-      'bi-wallet',
-      'bi-bank',
-      'bi-cash-stack',
-      'bi-credit-card',
-      'bi-piggy-bank',
-      'bi-coin',
+      'bi-wallet', 'bi-bank', 'bi-cash-stack', 
+      'bi-credit-card', 'bi-piggy-bank', 'bi-coin', 
       'bi-currency-dollar'
     ];
 
-    // Referência aos elementos da página
-    const listaContas = document.getElementById('listaContas');
-    const nomeConta = document.getElementById('nomeConta');
-    const iconeConta = document.getElementById('iconeConta');
-    const iconesDisponiveis = document.getElementById('iconesDisponiveis');
+    // Referências aos elementos da página
+    const listaContasEl = document.getElementById('listaContas');
+    const nomeContaInput = document.getElementById('nomeConta');
+    const iconeContaInput = document.getElementById('iconeConta'); // Input hidden para o valor do ícone
+    const iconesDisponiveisEl = document.getElementById('iconesDisponiveis');
     const tipoContaInput = document.getElementById('tipoConta');
     const saldoContaInput = document.getElementById('saldoConta');
-    const indiceContaEditando = document.getElementById('indiceContaEditando');
-    const modalConfirmacao = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
-    const nomeContaExcluir = document.getElementById('nomeContaExcluir');
+    const contaIdEditandoInput = document.getElementById('indiceContaEditando'); // Usaremos para guardar o ID da conta em edição
+    
+    // Modais Bootstrap
+    const modalContaEl = document.getElementById('modalConta');
+    const bsModalConta = new bootstrap.Modal(modalContaEl);
+    const modalConfirmacaoEl = document.getElementById('modalConfirmacao');
+    const bsModalConfirmacao = new bootstrap.Modal(modalConfirmacaoEl);
+    
+    const nomeContaExcluirEl = document.getElementById('nomeContaExcluir');
     const btnConfirmarExclusao = document.getElementById('btnConfirmarExclusao');
     const btnAdicionarConta = document.getElementById('btnAdicionarConta');
-    const modalConta = document.getElementById('modalConta');
+    
+    let contas = []; // Array para armazenar as contas vindas do backend
+    let idParaExcluir = null; // Armazenará o ID da conta a ser excluída
 
-    let contas = JSON.parse(localStorage.getItem('contas')) || [];
-    let indiceParaExcluir = null;
+    const API_BASE_URL = 'http://localhost:8000'; // Base da sua API (ajuste se necessário)
 
-    // Exibe ícones na tela
+    // Função para buscar o token de autenticação
+    function getToken() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('Token não encontrado no localStorage. Redirecionando para login.');
+        // Idealmente, não fazer alert e redirecionar em todas as chamadas,
+        // mas sim ter um tratamento global ou no início do carregamento da página.
+        // window.location.href = 'login.html'; // Ajuste o caminho para sua página de login
+        return null;
+      }
+      return token;
+    }
+
+    // Exibe ícones na tela para seleção
     function renderizarIcones() {
-      iconesDisponiveis.innerHTML = '';
+      iconesDisponiveisEl.innerHTML = '';
       icones.forEach(nomeIcone => {
         const i = document.createElement('i');
         i.className = `bi ${nomeIcone} icone-opcao`;
         i.onclick = () => {
-          iconeConta.value = nomeIcone;
+          iconeContaInput.value = nomeIcone; // Guarda o nome da classe do ícone
           document.querySelectorAll('.icone-opcao').forEach(el => el.classList.remove('selecionado'));
           i.classList.add('selecionado');
         };
-        iconesDisponiveis.appendChild(i);
+        iconesDisponiveisEl.appendChild(i);
       });
     }
 
-    // Exibe contas salvas na tela
+    // Exibe contas na tela
     function renderizarContas() {
-      listaContas.innerHTML = '';
-      contas.forEach((conta, index) => {
-        const div = document.createElement('div');
-        div.className = 'conta-item';
-        div.innerHTML = `
-          <div class="d-flex justify-content-between w-100 align-items-center">
-            <div>
-              <i class="bi ${conta.icone} icone-preview me-2"></i>
-              <strong>${conta.nome}</strong><br>
-              <small>${conta.tipo} | Saldo: R$ ${conta.saldo.toFixed(2)}</small>
-            </div>
-            <div>
-              <button class="btn btn-sm btn-outline-danger" onclick="excluirConta(${index}, event)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-        `;
-        div.onclick = () => editarConta(index);
-        listaContas.appendChild(div);
-      });
-    }
+  listaContasEl.innerHTML = '';
+  if (!contas || contas.length === 0) {
+    listaContasEl.innerHTML = '<p class="text-center text-muted mt-3">Nenhuma conta cadastrada ainda.</p>';
+    return;
+  }
+  contas.forEach(conta => {
 
-    // Excluir uma conta (abre o modal de confirmação)
-    function excluirConta(index, event) {
-      event.stopPropagation();
-      indiceParaExcluir = index;
-      nomeContaExcluir.textContent = contas[index].nome;
-      modalConfirmacao.show();
-    }
+    const div = document.createElement('div');
+    div.className = 'conta-item';
+    div.setAttribute('data-id', conta.id); 
+    const saldoFormatado = Number(conta.balance).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    div.innerHTML = `
+      <div class="d-flex justify-content-between w-100 align-items-center" onclick= "editarConta(${conta.id})">
+        <div style="cursor: pointer;"> 
+          <i class="bi ${conta.icon || 'bi-question-circle'} icone-preview me-2"></i>
+          <strong>${conta.name}</strong><br>
+          <small>${conta.account_type} | Saldo: ${saldoFormatado}</small>
+        </div>
+        <div>
+          <button class="btn btn-sm btn-outline-danger" onclick="confirmarExclusao(${conta.id}, '${conta.name.replace(/'/g, "\\'")}', event)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+    `;
+    listaContasEl.appendChild(div);
+  });
+}
 
-    // Confirmar exclusão ao clicar em "Sim"
-    btnConfirmarExclusao.onclick = () => {
-      if (indiceParaExcluir !== null) {
-        contas.splice(indiceParaExcluir, 1);
-        localStorage.setItem('contas', JSON.stringify(contas));
+    // Buscar contas do backend
+    async function fetchContas() {
+      const token = getToken();
+      if (!token) {
+        alert('Sessão expirada ou inválida. Por favor, faça login novamente.');
+        window.location.href = 'login.html'; // Ajuste o caminho se necessário
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/accounts/`, { // Endpoint GET /accounts/
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.status === 401){
+            alert('Sessão expirada. Faça login novamente.');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+        }
+        if (!response.ok) {
+          throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+        }
+        contas = await response.json();
         renderizarContas();
-        indiceParaExcluir = null;
-        modalConfirmacao.hide();
+      } catch (error) {
+        console.error('Erro detalhado ao buscar contas:', error);
+        alert(`Não foi possível carregar as contas: ${error.message}`);
+        listaContasEl.innerHTML = '<p class="text-center text-danger mt-3">Erro ao carregar contas. Verifique sua conexão e tente novamente.</p>';
+      }
+    }
+
+    // Preparar para excluir uma conta (abre o modal de confirmação)
+    function confirmarExclusao(accountId, accountName, event) {
+      if (event) event.stopPropagation(); 
+      idParaExcluir = accountId;
+      nomeContaExcluirEl.textContent = accountName;
+      bsModalConfirmacao.show();
+    }
+
+    // Excluir conta do backend
+    btnConfirmarExclusao.onclick = async () => {
+      if (idParaExcluir === null) return;
+      const token = getToken();
+      if (!token) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/accounts/${idParaExcluir}`, { // Endpoint DELETE /accounts/{id}
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.status === 401){
+            alert('Sessão expirada. Faça login novamente.');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+        }
+        if (!response.ok) {
+          throw new Error(`Erro ao excluir conta: ${response.status}`);
+        }
+        await fetchContas(); // Recarrega a lista do backend após a exclusão
+        idParaExcluir = null;
+        bsModalConfirmacao.hide();
+        alert('Conta excluída com sucesso!');
+      } catch (error) {
+        console.error('Erro ao excluir conta:', error);
+        alert(`Não foi possível excluir a conta: ${error.message}`);
       }
     };
 
-    // Editar uma conta existente
-    function editarConta(index) {
-      const conta = contas[index];
-      nomeConta.value = conta.nome;
-      iconeConta.value = conta.icone;
-      tipoContaInput.value = conta.tipo;
-      saldoContaInput.value = conta.saldo;
-      indiceContaEditando.value = index;
-      renderizarIcones();
+    // Preparar para editar uma conta existente
+    function editarConta(accountId) {
+      const conta = contas.find(c => c.id === accountId);
+      if (!conta) {
+        console.error('Conta não encontrada para edição com ID:', accountId);
+        return;
+      }
+
+      document.querySelector('#modalConta .modal-title').textContent = 'Editar Conta';
+      nomeContaInput.value = conta.name;
+      iconeContaInput.value = conta.icon || ''; 
+      tipoContaInput.value = conta.account_type;
+      saldoContaInput.value = conta.balance;
+      contaIdEditandoInput.value = conta.id; 
+
+      renderizarIcones(); 
       document.querySelectorAll('.icone-opcao').forEach(el => {
-        if (el.classList.contains(conta.icone)) {
+        el.classList.remove('selecionado'); // Limpa seleções anteriores
+        if (conta.icon && el.classList.contains(conta.icon)) {
           el.classList.add('selecionado');
-        } else {
-          el.classList.remove('selecionado');
         }
       });
-      const modal = new bootstrap.Modal(modalConta);
-      modal.show();
+      bsModalConta.show();
+    }
+    
+    function limparFormularioModal() {
+        document.querySelector('#modalConta .modal-title').textContent = 'Adicionar Conta';
+        nomeContaInput.value = '';
+        iconeContaInput.value = ''; 
+        tipoContaInput.value = ''; // Reseta para o valor padrão do select (geralmente o primeiro ou vazio)
+        saldoContaInput.value = '';
+        contaIdEditandoInput.value = ''; 
+        document.querySelectorAll('.icone-opcao.selecionado').forEach(el => el.classList.remove('selecionado'));
     }
 
-    // Salva ou edita uma conta
-    function salvarConta() {
-      const nome = nomeConta.value.trim();
-      const icone = iconeConta.value.trim();
+    // Salva (cria nova) ou edita uma conta no backend
+    async function salvarConta() {
+      const nome = nomeContaInput.value.trim();
+      const icone = iconeContaInput.value.trim();
       const tipo = tipoContaInput.value;
       const saldo = parseFloat(saldoContaInput.value);
-      const indice = indiceContaEditando.value;
+      const accountId = contaIdEditandoInput.value; 
 
-      // Validação ajustada
-      if (!nome) {
-        alert("Por favor, preencha o nome da conta.");
-        return;
-      }
-      if (!tipo) {
-        alert("Por favor, selecione o tipo da conta.");
-        return;
-      }
-      if (isNaN(saldo)) {
-        alert("Por favor, informe um saldo válido.");
-        return;
-      }
-      if (!icone) {
-        alert("Por favor, escolha um ícone para a conta.");
-        return;
-      }
+      if (!nome) { alert("Por favor, preencha o nome da conta."); return; }
+      if (!tipo) { alert("Por favor, selecione o tipo da conta."); return; }
+      if (isNaN(saldo)) { alert("Por favor, informe um saldo válido."); return; }
+      if (!icone) { alert("Por favor, escolha um ícone para a conta."); return; }
 
-      const novaConta = { nome, icone, tipo, saldo };
+      const token = getToken();
+      if (!token) return;
 
-      if (indice === '') {
-        contas.push(novaConta);
-      } else {
-        contas[indice] = novaConta;
-        indiceContaEditando.value = '';
+      // Os nomes dos campos aqui devem bater com o schema Pydantic AccountCreate
+      const contaData = { 
+        name: nome, 
+        account_type: tipo, 
+        icon: icone, 
+        balance: saldo 
+      };
+
+      let url = `${API_BASE_URL}/accounts/`;
+      let method = 'POST';
+
+      if (accountId) { 
+        url += accountId; // URL para PUT: /accounts/{id}
+        method = 'PUT';
       }
 
-      localStorage.setItem('contas', JSON.stringify(contas));
-      renderizarContas();
-      nomeConta.value = '';
-      iconeConta.value = '';
-      tipoContaInput.value = '';
-      saldoContaInput.value = '';
-      const modal = bootstrap.Modal.getInstance(modalConta);
-      modal.hide();
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(contaData)
+        });
+        
+        if (response.status === 401){
+            alert('Sessão expirada. Faça login novamente.');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+        }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ detail: `Erro ${response.status} ao salvar conta.` }));
+          throw new Error(errorData.detail);
+        }
+        
+        await fetchContas(); // Recarrega a lista do backend
+        
+        bsModalConta.hide(); 
+        limparFormularioModal(); 
+        alert(`Conta ${accountId ? 'atualizada' : 'salva'} com sucesso!`);
+
+      } catch (error) {
+        console.error('Erro ao salvar conta:', error);
+        alert(`Não foi possível salvar a conta: ${error.message}`);
+      }
     }
 
-    // Evento ao clicar no botão "Salvar"
+    // Evento ao clicar no botão "Salvar" do modal
     document.getElementById('btnSalvar').addEventListener('click', salvarConta);
 
     // Resetar modal ao abrir para adicionar nova conta
     btnAdicionarConta.addEventListener('click', () => {
-      nomeConta.value = '';
-      iconeConta.value = '';
-      tipoContaInput.value = '';
-      saldoContaInput.value = '';
-      indiceContaEditando.value = '';
-      renderizarIcones();
-      document.querySelectorAll('.icone-opcao').forEach(el => el.classList.remove('selecionado'));
+      limparFormularioModal();
+      renderizarIcones(); 
+    });
+    
+    // Limpa o formulário quando o modal é fechado (se não foi por salvar/cancelar)
+    modalContaEl.addEventListener('hidden.bs.modal', event => {
+      // Se você quiser garantir que o formulário esteja sempre limpo ao fechar o modal,
+      // independentemente de como foi fechado, você pode chamar limparFormularioModal() aqui.
+      // No entanto, a limpeza já é feita ao clicar em Adicionar e após salvar.
+      // limparFormularioModal(); 
     });
 
-    // Inicialização
-    renderizarIcones();
-    renderizarContas();
+    // Inicialização da página
+    window.onload = async () => {
+      // Carregue a navbar (se você tiver uma função para isso no functions-nav.js)
+      if (typeof loadNavbar === 'function') { // Supondo que loadNavbar está em functions-nav.js
+          loadNavbar(); 
+      } else if (document.getElementById('navbar-placeholder') && typeof fetch === 'function') {
+          // Fallback para carregar navbar se não existir uma função global
+          fetch('../html/nav.html') // Ajuste o caminho conforme necessário
+              .then(response => response.text())
+              .then(data => {
+                  document.getElementById('navbar-placeholder').innerHTML = data;
+                  // Chamar função de ativação de links da navbar do functions-nav.js se necessário
+                  if (typeof activateCurrentNav === 'function') activateCurrentNav();
+              })
+              .catch(error => console.error('Erro ao carregar a navbar:', error));
+      }
+      
+      renderizarIcones(); 
+      await fetchContas(); 
+    };
   </script>
 </body>
 </html>

@@ -186,23 +186,15 @@
          
           <!-- Bloco Contas -->
           <div class="col-lg-6 d-flex card-align-1">
-            <div class="border rounded p-4 d-flex flex-column w-100 bg-white">
-              <h4 class="fw-bold mb-3 text-dark">Contas</h4>
-              <ul class="list-group mb-3">
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Conta Corrente
-                  <span class="badge rounded-pill" style="background-color: #508991;">R$ 0,00</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Conta Poupança
-                  <span class="badge rounded-pill" style="background-color: #508991;">R$ 0,00</span>
-                </li>
-              </ul>
-              <div class="mt-auto">
-                <a href="contas.html" class="btn btn-outline-success w-100">Gerenciar Contas</a>
-              </div>
-            </div>
-          </div>
+      <div class="border rounded p-4 d-flex flex-column w-100 bg-white">
+        <h4 class="fw-bold mb-3 text-dark">Contas</h4>
+        <ul class="list-group mb-3" id="listaResumoContas">  <li class="list-group-item">Carregando contas...</li>
+        </ul>
+        <div class="mt-auto">
+          <a href="contas.html" class="btn btn-outline-success w-100">Gerenciar Contas</a>
+        </div>
+      </div>
+    </div>
 
 
           <!-- Bloco Cartões -->
@@ -613,6 +605,168 @@
         }
       });
     </script>
+
+
+    <script>
+    
+    // Dentro da tag <script> existente no final do seu principal.html
+
+// ... (suas funções existentes: formatarValor, exibirDataAtual, fetchData, fetchGoals, preencherTags, etc.) ...
+
+async function fetchAccountsSummary() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.error('Token não encontrado para buscar resumo de contas.');
+        // Você pode querer redirecionar para o login ou mostrar uma mensagem na UI
+        const listaResumoContasEl = document.getElementById('listaResumoContas');
+        if (listaResumoContasEl) {
+            listaResumoContasEl.innerHTML = '<li class="list-group-item text-warning">Faça login para ver suas contas.</li>';
+        }
+        return;
+    }
+
+    try {
+        // A URL base da sua API. Se você já tem uma variável global para isso, use-a.
+        const API_BASE_URL = 'http://localhost:8000'; 
+        const response = await fetch(`${API_BASE_URL}/accounts/`, { // Endpoint para listar contas
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.status === 401) {
+            console.error('Não autorizado. Redirecionando para login.');
+            window.location.href = 'login.html'; // Ajuste o caminho se necessário
+            return;
+        }
+        if (!response.ok) {
+            throw new Error(`Erro ao buscar resumo de contas: ${response.status} ${response.statusText}`);
+        }
+        const accounts = await response.json();
+        renderAccountsSummary(accounts);
+    } catch (error) {
+        console.error('Erro detalhado ao buscar resumo de contas:', error);
+        const listaResumoContasEl = document.getElementById('listaResumoContas');
+        if (listaResumoContasEl) {
+            listaResumoContasEl.innerHTML = `<li class="list-group-item text-danger">Erro ao carregar contas: ${error.message}</li>`;
+        }
+    }
+}
+
+function renderAccountsSummary(accounts) {
+    const listaResumoContasEl = document.getElementById('listaResumoContas');
+    if (!listaResumoContasEl) {
+        console.error('Elemento listaResumoContas não encontrado no DOM.');
+        return;
+    }
+    listaResumoContasEl.innerHTML = ''; // Limpa o conteúdo estático ou de "carregando"
+
+    if (!accounts || accounts.length === 0) {
+        listaResumoContasEl.innerHTML = '<li class="list-group-item text-muted">Nenhuma conta cadastrada.</li>';
+        return;
+    }
+
+    // Limitar a exibição a um número X de contas, se desejar, ou mostrar todas
+    // Exemplo: Mostrar até 3 contas
+    const accountsToShow = accounts.slice(0, 3); 
+
+    accountsToShow.forEach(account => {
+        // Usando a sua função formatarValor existente em principal.html
+        const saldoFormatado = formatarValor(account.balance); 
+        
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        
+        // Mostra nome e tipo da conta. Adiciona ícone se disponível.
+        let accountDisplayName = account.name;
+        if (account.account_type) {
+            accountDisplayName += ` <small class="text-muted">(${account.account_type})</small>`;
+        }
+        if (account.icon) {
+            accountDisplayName = `<i class="bi ${account.icon} me-2"></i>` + accountDisplayName;
+        }
+
+        listItem.innerHTML = `
+            <span>${accountDisplayName}</span>
+            <span class="badge rounded-pill" style="background-color: #508991;">${saldoFormatado}</span>
+        `;
+        listaResumoContasEl.appendChild(listItem);
+    });
+
+    // Se houver mais contas do que o exibido, pode adicionar um link "Ver todas"
+    if (accounts.length > accountsToShow.length) {
+        const verMaisItem = document.createElement('li');
+        verMaisItem.className = 'list-group-item text-center';
+        verMaisItem.innerHTML = `<a href="contas.html">Ver todas as contas (${accounts.length})</a>`;
+        listaResumoContasEl.appendChild(verMaisItem);
+    }
+}
+
+// Modifique sua função window.onload para chamar a nova função
+window.onload = async () => {
+  // Seu código existente em window.onload:
+  // await fetchData(); // Para receitas e despesas
+  // await fetchGoals();
+  // atualizarTotais();
+  // preencherTags();
+  // exibirDataAtual();
+  // document.getElementById('navbar-placeholder').innerHTML = ... (se estiver fazendo fetch da navbar aqui)
+
+  // Adicione a chamada para buscar o resumo das contas:
+  await fetchAccountsSummary();
+
+  // ----- As chamadas que você já tinha em principal.html -----
+  // Certifique-se de que o token é verificado antes ou dentro de cada uma dessas.
+  const token = localStorage.getItem('token');
+  if (token) {
+      // As funções abaixo já devem existir no seu principal.html
+      // e provavelmente já lidam com o token ou são chamadas após uma verificação.
+      // Se não, você precisará adaptar fetchData e fetchGoals para usar o token
+      // similar a como fetchAccountsSummary faz.
+      await fetchData(); // Busca receitas e despesas
+      await fetchGoals(); // Busca metas (para popular tags, por exemplo)
+      atualizarTotais();  // Calcula e exibe totais de receita/despesa/saldo
+      preencherTags();    // Preenche o select de tags no modal de despesa
+      exibirDataAtual();  // Mostra a data atual
+      
+      // Carregar informações do usuário para saudação (se ainda não estiver sendo feito)
+      try {
+          const responseUser = await fetch("http://localhost:8000/users/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (responseUser.ok) {
+            const user = await responseUser.json();
+            document.getElementById("usernameDisplay").textContent = "Bom dia, " + user.username;
+          } else {
+            document.getElementById("usernameDisplay").textContent = "Bom dia!";
+          }
+      } catch(error) {
+        console.error("Erro ao buscar nome do usuário:", error);
+        document.getElementById("usernameDisplay").textContent = "Bom dia!";
+      }
+
+  } else {
+    console.warn("Nenhum token encontrado, algumas funcionalidades podem não carregar.");
+    // Redirecionar para login se preferir um comportamento mais estrito
+    // window.location.href = 'login.html';
+    document.getElementById("usernameDisplay").textContent = "Bom dia!"; // Saudação genérica
+    exibirDataAtual(); // Pode exibir a data mesmo sem login
+  }
+  // Lógica para carregar navbar via functions-nav.js (se o seu functions-nav.js fizer isso)
+  // ou o fetch direto que você tinha antes no metas.html (se aplicável aqui)
+  if (typeof loadNavbarFromFunctionsNav === 'function') { // Exemplo, nome da função pode variar
+      loadNavbarFromFunctionsNav();
+  } else if (document.getElementById('navbar-placeholder')) {
+      // Seu código existente para carregar navbar via fetch
+      // fetch('../html/nav.html').then(...) 
+  }
+};
+
+</script>
+    
+    
   </body>
 </html>
 
