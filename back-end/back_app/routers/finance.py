@@ -1,17 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, status #type: ignore
+from fastapi.security import OAuth2PasswordBearer #type: ignore
+from sqlalchemy.orm import Session #type: ignore
 from typing import List
 
 from back_app.models import User, Revenue, Expense, Goal
 from back_app import database, schemas
 from back_app.database import get_session
 from back_app.security import get_current_user
-import google.generativeai as genai
+import google.generativeai as genai #type: ignore
 import json
 import os
 import re
-from dotenv import load_dotenv
+from dotenv import load_dotenv #type: ignore
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
