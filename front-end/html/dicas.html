@@ -4,11 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dicas Financeiras</title>
-  <!-- Estilos do Bootstrap e ícones -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/dropdown.css">
-    <script src="../js/functions-nav.js"></script>
+  <script src="../js/functions-nav.js"></script>
 
   <style>
     body {
@@ -20,9 +19,9 @@
       cursor: pointer;
       transition: 0.3s;
       border: 1px solid #d1e7dd;
-      display: flex; /* Faz o card se comportar como flex container */
-      flex-direction: column; /* Organiza conteúdo em coluna */
-      height: 100%; /* Garante que todos os cards tenham a mesma altura */
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     .card-dica:hover {
@@ -31,15 +30,29 @@
     }
 
     .card-body {
-      flex: 1; /* Faz o corpo do card ocupar o espaço disponível */
+      flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Distribui o conteúdo uniformemente */
+      justify-content: space-between;
     }
 
-    /* Garantir que o botão "Ver mais" fique na parte inferior */
-    .card-body .btn {
-      margin-top: auto; /* Empurra o botão para o final do card */
+    .tips-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Ajusta dinamicamente */
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px; /* Aumenta pra evitar corte */
+      margin: 0 auto;
+      padding: 0 15px; /* Reduz padding pra evitar bordas fora da tela */
+    }
+
+    .tip-card {
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      min-height: 200px;
+      width: 100%;
+      box-sizing: border-box; /* Garante que padding não ultrapasse os limites */
     }
 
     .detalhe-dica {
@@ -51,129 +64,80 @@
       margin-top: 10px;
     }
 
-    /* padding horizontal padrao */
     .padding {
-      padding: 0 50px !important;
+      padding: 0 15px !important; /* Reduz padding geral */
     }
 
     .active {
       color: #09bc8a !important;
     }
-      
-    /* ajustes para telas pequenas */
+
+    .btn-generate-tips {
+      background: linear-gradient(90deg, #09bc8a 0%, #07a376 100%); /* Gradiente pra destacar */
+      border: none;
+      padding: 12px 25px; /* Aumenta tamanho */
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra pra destacar */
+      transition: all 0.3s ease;
+    }
+
+    .btn-generate-tips:hover {
+      background: linear-gradient(90deg, #07a376 0%, #058c64 100%);
+      transform: translateY(-2px); /* Efeito de elevação */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
     @media only screen and (max-width: 992px) {
-      .padding {
-        padding: 0 10px !important;
+      .tips-container {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
       }
-
-      /* Ajustar cards para ocupar largura total em telas pequenas */
-      .col-md-4 {
-        flex: 0 0 100%; /* Cada card ocupa 100% da largura */
-        max-width: 100%; /* Remove restrições de largura */
-        margin-bottom: 15px; /* Espaço maior entre cards */
+      .tip-card {
+        min-height: 150px;
       }
-
-      /* Aumentar padding interno dos cards em mobile */
-      .card-body {
-        padding: 1.5rem; /* Mais espaço interno */
-      }
-
-      /* Ajustar tamanho da fonte para melhor legibilidade */
-      .card-title {
-        font-size: 1.2rem;
-      }
-
-      .card-text {
-        font-size: 0.9rem;
+      .btn-generate-tips {
+        font-size: 1rem;
+        padding: 10px 20px;
       }
     }
 
     @media only screen and (max-width: 576px) {
-      /* Ajustes adicionais para telas muito pequenas */
-      .card-body {
-        padding: 1rem;
+      .tip-card {
+        padding: 15px;
+        min-height: 120px;
       }
-
-      .card-title {
-        font-size: 1.1rem;
-      }
-
-      .card-text {
-        font-size: 0.85rem;
-      }
-
-      .btn {
-        font-size: 0.8rem;
-        padding: 0.3rem 0.6rem;
-      }
+      .card-title { font-size: 1.1rem; }
+      .card-text { font-size: 0.85rem; }
+      .btn-generate-tips { font-size: 0.9rem; padding: 8px 16px; }
     }
   </style>
 </head>
 <body style="background: linear-gradient(176deg, rgba(80,137,145,1) 0%, rgba(201,237,214,1) 100%); background-repeat: no-repeat; background-size: cover;">
- <!-- cabecalho com barra de navegacao -->
- <div id="navbar-placeholder"></div>
+  <div id="navbar-placeholder"></div>
 
-
-  <!-- CONTEÚDO PRINCIPAL -->
   <div class="container mt-5">
-    <h2 style="color: #172a3a" class="mb-4">Dicas Personalizadas</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 style="color: #172a3a">Dicas Personalizadas</h2>
+      <button class="btn btn-generate-tips text-white" onclick="loadFinancialTips()">Gerar Dicas</button>
+    </div>
 
-    <div class="row">
-        <!-- CARD 1 -->
-    <div class="col-md-4 mb-3">
-        <div class="card card-dica" onclick="mostrarDica('Crie um orçamento mensal', 'Liste todos os seus ganhos e gastos. Use apps ou planilhas. Isso evita sustos.')">
-        <div class="card-body">
-            <h5 class="card-title">Crie um orçamento mensal</h5>
-            <p class="card-text">Saber para onde seu dinheiro vai é essencial.</p>
-            <button class="btn btn-outline-success p-0 mt-2 p-1">Ver mais</button>
-        </div>
-        </div>
+    <div class="tips-container" id="tipsContainer">
+      <!-- As dicas serão preenchidas dinamicamente via JavaScript -->
     </div>
-    
-    <!-- CARD 2 -->
-    <div class="col-md-4 mb-3">
-        <div class="card card-dica" onclick="mostrarDica('Evite compras por impulso', 'Essa técnica ajuda a refletir melhor e evitar gastos desnecessários.')">
-        <div class="card-body">
-            <h5 class="card-title">Evite compras por impulso</h5>
-            <p class="card-text">Espere 24h antes de comprar algo não essencial.</p>
-            <button class="btn btn-outline-success p-0 mt-2 p-1">Ver mais</button>
-        </div>
-        </div>
-    </div>
-    
-    <!-- CARD 3 -->
-    <div class="col-md-4 mb-3">
-        <div class="card card-dica" onclick="mostrarDica('Tenha uma reserva de emergência', 'Imprevistos acontecem. Uma reserva evita dívidas e te dá segurança.')">
-        <div class="card-body">
-            <h5 class="card-title">Tenha uma reserva de emergência</h5>
-            <p class="card-text">Guarde de 3 a 6 meses dos seus gastos mensais.</p>
-            <button class="btn btn-outline-success p-0 mt-2 p-1">Ver mais</button>
-        </div>
-        </div>
-    </div>
-    
-    <!-- CARD 4 -->
-    <div class="col-md-4 mb-3">
-        <div class="card card-dica" onclick="mostrarDica('Gaste tudo com apostas', 'Você tem a chance de ganhar 200%, mas só perde no máximo 100%. Faça as contas.')">
-        <div class="card-body">
-            <h5 class="card-title">Gaste tudo com apostas</h5>
-            <p class="card-text">Apostas são o melhor investimento possível</p>
-            <button class="btn btn-outline-success p-0 mt-2 p-1">Ver mais</button>
-        </div>
-        </div>
-    </div>
-  </div>
 
-  <!-- MODAL -->
-<div class="modal fade" id="modalDica" tabindex="-1" aria-labelledby="modalDicaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="modalDicaLabel">Título da dica</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-        <div class="modal-body" id="modalDicaTexto">
-          Texto da dica
+    <div class="modal fade" id="modalDica" tabindex="-1" aria-labelledby="modalDicaLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title" id="modalDicaLabel">Título da dica</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body" id="modalDicaTexto">
+            Texto da dica
+          </div>
         </div>
       </div>
     </div>
@@ -186,8 +150,70 @@
       const modal = new bootstrap.Modal(document.getElementById('modalDica'));
       modal.show();
     }
+
+    function renderTips(tips) {
+      const tipsContainer = document.getElementById('tipsContainer');
+      tipsContainer.innerHTML = '';
+      tips.forEach((tip, index) => {
+        const card = `
+          <div class="tip-card">
+            <div class="card-body">
+              <h5 class="card-title">${tip.title}</h5>
+              <p class="card-text">${tip.description}</p>
+            </div>
+          </div>
+        `;
+        tipsContainer.innerHTML += card;
+      });
+    }
+
+    function loadFinancialTips() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Por favor, faça login para ver suas dicas financeiras.');
+        window.location.href = '/static/html/login.html';
+        return;
+      }
+
+      try {
+        // Buscar os dados financeiros do usuário
+        const xhrFinancial = new XMLHttpRequest();
+        xhrFinancial.open('GET', 'http://localhost:8000/finance/financial-data', false);
+        xhrFinancial.setRequestHeader('Authorization', `Bearer ${token}`);
+        xhrFinancial.send();
+        if (xhrFinancial.status !== 200) throw new Error('Erro ao buscar dados financeiros');
+        const financialData = JSON.parse(xhrFinancial.responseText);
+
+        // Gerar dicas com o Gemini
+        const xhrTips = new XMLHttpRequest();
+        xhrTips.open('POST', 'http://localhost:8000/finance/generate-tips', false);
+        xhrTips.setRequestHeader('Content-Type', 'application/json');
+        xhrTips.setRequestHeader('Authorization', `Bearer ${token}`);
+        xhrTips.send(JSON.stringify(financialData));
+        if (xhrTips.status !== 200) throw new Error('Erro ao gerar dicas');
+        const tipsData = JSON.parse(xhrTips.responseText);
+
+        const tips = tipsData.tips || [];
+        // Salva as dicas no localStorage
+        localStorage.setItem('financialTips', JSON.stringify(tips));
+        // Renderiza as dicas
+        renderTips(tips);
+      } catch (error) {
+        console.error('Erro ao carregar dicas:', error);
+        alert('Erro ao carregar dicas financeiras. Tente novamente mais tarde.');
+      }
+    }
+
+    // Carrega dicas salvas do localStorage ao abrir a página
+    window.onload = function() {
+      const savedTips = localStorage.getItem('financialTips');
+      if (savedTips) {
+        const tips = JSON.parse(savedTips);
+        renderTips(tips);
+      }
+    };
   </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
