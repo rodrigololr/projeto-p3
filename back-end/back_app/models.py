@@ -17,6 +17,7 @@ from sqlalchemy.orm import (
 
 table_registry = registry()
 
+
 @table_registry.mapped_as_dataclass
 class User:
     __tablename__ = 'users'
@@ -28,11 +29,13 @@ class User:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
-    total_balance: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)  # Valor padrão explícito
+    total_balance: Mapped[float] = mapped_column(
+        Float, default=0.0, nullable=False)  # Valor padrão explícito
 
     full_name = Column(String, nullable=True)
     gender = Column(String, nullable=True)
     birth_date = Column(Date, nullable=True)
+
 
 @table_registry.mapped_as_dataclass
 class Revenue:
@@ -45,6 +48,7 @@ class Revenue:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+
 
 @table_registry.mapped_as_dataclass
 class Expense:
@@ -59,6 +63,7 @@ class Expense:
         init=False, server_default=func.now()
     )
 
+
 @table_registry.mapped_as_dataclass
 class Goal:
     __tablename__ = 'goals'
@@ -68,6 +73,26 @@ class Goal:
     amount: Mapped[float]
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     tag: Mapped[str]
+    type: Mapped[str] = mapped_column(String(50), default='despesa')
+    created_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now()
+    )
+
+
+# ... (seu código existente para User, Revenue, Expense, Goal) ...
+
+@table_registry.mapped_as_dataclass
+class Account:
+    __tablename__ = "accounts"
+
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    name: Mapped[str] = mapped_column(String(100), index=True)
+    account_type: Mapped[str] = mapped_column(String(50))
+    icon: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    balance: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )

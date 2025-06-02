@@ -5,8 +5,10 @@ from fastapi.staticfiles import StaticFiles  # type: ignore
 
 from back_app import database, models  # Importa database e models pra inicializar metas
 from back_app.database import get_session
-from back_app.routers import auth, finance, users  # Importa as rotas existentes
-from back_app.routers.finance import initialize_default_goals  # Importa a função de inicialização de metas
+from back_app.routers import auth, finance, users, accounts   # Importa as rotas existentes
+from back_app.routers.finance import initialize_default_goals  # Importa a função de inicialização de metasfrom back_app.routers import auth as auth_router
+
+from back_app.routers import accounts as accounts_router # O NOVO router de contas
 
 app = FastAPI(title='Projeto P3')
 
@@ -25,6 +27,7 @@ app.mount('/static', StaticFiles(directory='../front-end'), name='static')
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(finance.router)
+app.include_router(accounts_router.router)
 
 @app.get('/')
 async def root():

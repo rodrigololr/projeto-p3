@@ -98,13 +98,15 @@ class GoalBase(BaseModel):
 
 
 class GoalCreate(GoalBase):
-    tag: str  # Adicionando tag como campo opcional
+    tag: str
+    type: str
 
 
 class GoalOut(GoalBase):
     id: int
     user_id: int
     tag: str
+    type: str
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
@@ -118,3 +120,29 @@ class UserUpdate(BaseModel):
     gender: Optional[str] = None
     birth_date: Optional[date] = None
     username: Optional[str] = None
+
+
+class AccountBase(BaseModel):
+    name: str
+    account_type: str
+    icon: Optional[str] = None  
+    balance: float = 0.0
+
+class AccountCreate(AccountBase):
+    pass
+
+class AccountUpdate(AccountBase):
+    name: Optional[str] = None
+    account_type: Optional[str] = None
+    icon: Optional[str] = None
+    balance: Optional[float] = None
+
+class AccountOut(AccountBase):
+    id: int
+    user_id: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+class AccountList(BaseModel):
+    accounts: List[AccountOut]
