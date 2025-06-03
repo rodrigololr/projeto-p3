@@ -262,7 +262,7 @@ def generate_financial_tips(
     prompt = (
         "Você é um consultor financeiro. Gere 3 dicas financeiras personalizadas com base nos seguintes dados do usuário:\n"
         f"Receitas: {user_data['revenues']}\n"
-        
+        f"Despesas: {user_data['expenses']}\n"
         f"Metas: {user_data['goals']}\n"
         "Cada dica deve ter um título (máximo 30 caracteres) e uma descrição (máximo 100 caracteres). "
         "Retorne as dicas no formato JSON com a estrutura: "
