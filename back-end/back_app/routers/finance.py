@@ -260,9 +260,9 @@ def generate_financial_tips(
     user_data = get_financial_data(db=db, current_user=current_user)
 
     prompt = (
-        "Você é um consultor financeiro. Gere 4 dicas financeiras personalizadas com base nos seguintes dados do usuário:\n"
+        "Você é um consultor financeiro. Gere 3 dicas financeiras personalizadas com base nos seguintes dados do usuário:\n"
         f"Receitas: {user_data['revenues']}\n"
-        f"Despesas: {user_data['expenses']}\n"
+        
         f"Metas: {user_data['goals']}\n"
         "Cada dica deve ter um título (máximo 30 caracteres) e uma descrição (máximo 100 caracteres). "
         "Retorne as dicas no formato JSON com a estrutura: "
@@ -278,6 +278,6 @@ def generate_financial_tips(
     except json.JSONDecodeError as e:
         raise HTTPException(
             status_code=500, detail=f"Erro ao parsear resposta do Gemini: {str(e)}")
-    except Exception as e:
+    except Exception as e: 
         raise HTTPException(
             status_code=500, detail=f"Erro ao gerar dicas: {str(e)}")

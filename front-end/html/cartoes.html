@@ -3,22 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adicionar Cartão de Crédito</title>
-  <!-- Estilos do Bootstrap e ícones -->
+  <title>Meus Cartões - PouPix</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-   
-  <link rel="stylesheet" href="../css/dropdown.css">
-    <script src="../js/functions-nav.js"></script>
+  <link rel="stylesheet" href="../css/dropdown.css"> <script src="../js/functions-nav.js"></script> 
   <style>
-    body {
-      background-color: #f8fff8;
-    }
 
     .cartao-item {
       background-color: #e8f5e9;
       border: 1px solid #c8e6c9;
-      border-left: 5px solid #2d6a4f;
+      border-left: 5px solid #4CAF50; /* Verde mais vibrante para cartões */
       border-radius: 12px;
       padding: 15px 20px;
       margin-bottom: 12px;
@@ -27,12 +21,16 @@
       gap: 12px;
       box-shadow: 0 2px 6px rgba(0, 128, 0, 0.1);
       transition: all 0.2s ease-in-out;
-      cursor: pointer;
     }
 
-    .cartao-item:hover {
+    .cartao-item:hover{
       background-color: #d7f0db;
       transform: translateY(-2px);
+    }
+    
+    .cartao-item-clickable-area {
+        cursor: pointer;
+        flex-grow: 1;
     }
 
     .icone-opcao {
@@ -49,132 +47,115 @@
     }
 
     .icone-opcao.selecionado {
-      border-color: green;
+      border-color: #2d6a4f; 
     }
 
     .icone-preview {
       font-size: 1.5rem;
-    }
-
-    /* Estilo do modal de confirmação */
-    .modal-confirmacao .modal-content {
-      border: 1px solid #c8e6c9;
-      border-left: 5px solid #2d6a4f;
-      border-radius: 12px;
-    }
-
-    .modal-confirmacao .modal-header {
-      background-color: #e8f5e9;
       color: #2d6a4f;
     }
 
+    /* Modal de confirmação (mantido similar ao de contas para consistência) */
+    .modal-confirmacao .modal-content {
+      border-radius: 12px;
+      border-left: 5px solid #dc3545;
+    }
+    .modal-confirmacao .modal-header {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-bottom: none;
+    }
+    .modal-confirmacao .modal-title {
+        font-weight: bold;
+    }
     .modal-confirmacao .btn-sim {
-      background-color: #4caf50;
-      border: none;
-    }
-
-    .modal-confirmacao .btn-sim:hover {
-      background-color: #2d6a4f;
-    }
-
-    .modal-confirmacao .btn-nao {
       background-color: #dc3545;
       border: none;
+      color: white;
     }
-
-    .modal-confirmacao .btn-nao:hover {
-      background-color: #b02a37;
+    .modal-confirmacao .btn-sim:hover {
+      background-color: #c82333;
     }
-
-    /* Estilos da nova navbar */
-    .active {
-      color: #09bc8a !important;
-    }
-
-    .padding {
-      padding: 0 50px !important;
-    }
-
-    @media only screen and (max-width: 992px) {
-      .padding {
-        padding: 0 10px !important;
-      }
-
-      .border-start {
-        border: 0 !important;
-      }
-
-      .navbar-nav {
-        text-align: center;
-      }
-    }
-
-    .dropdown-toggle::after {
-      display: none !important;
-    }
-
-    .dropdown-menu {
+    .modal-confirmacao .btn-nao {
+      background-color: #6c757d;
       border: none;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      color: white;
     }
-
-    .dropdown-item {
-      padding: 8px 16px;
-      font-size: 1rem;
+    .modal-confirmacao .btn-nao:hover {
+      background-color: #5a6268;
     }
-
-    .dropdown-item:hover {
-      background-color: #f8f9fa;
-      color: #09bc8a;
+    
+    .btn-success { /* Botão principal Adicionar/Salvar */
+        background-color: #198754;
+        border-color: #198754;
+    }
+    .btn-success:hover {
+        background-color: #157347;
+        border-color: #146c43;
+    }
+    
+    html, body.gradient-body {
+        min-height: 100vh !important;
+        margin: 0;
+        padding: 0;
+    }
+    body.gradient-body {
+        background: linear-gradient(176deg, rgba(80,137,145,1) 0%, rgba(201,237,214,1) 100%) !important;
+        background-repeat: no-repeat !important;
+        background-attachment: fixed !important;
+        background-size: cover !important;
     }
   </style>
 </head>
-<body style="background: linear-gradient(176deg, rgba(80,137,145,1) 0%, rgba(201,237,214,1) 100%); background-repeat: no-repeat; background-size: cover;">
+<body class="gradient-body">
 
-  <!-- Cabeçalho com a nova barra de navegação -->
   <div id="navbar-placeholder"></div>
 
-  <!-- Conteúdo principal -->
-  <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Meus Cartões de Crédito</h2>
-      <button class="btn btn-success" id="btnAdicionarCartao" data-bs-toggle="modal" data-bs-target="#modalCartao">Adicionar Cartão</button>
+  <div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="text-white fw-bold">Meus Cartões de Crédito</h2>
+      <button class="btn btn-success" id="btnAdicionarCartao" data-bs-toggle="modal" data-bs-target="#modalCartao">
+        <i class="bi bi-credit-card-2-front-fill me-2"></i>Adicionar Cartão
+      </button>
     </div>
 
-    <!-- Lista de cartões -->
-    <div id="listaCartoes"></div>
+    <div id="listaCartoes" class="mb-4">
+        <p class="text-center text-white">Carregando cartões...</p>
+    </div>
   </div>
 
-  <!-- Modal para adicionar/editar cartão -->
-  <div class="modal fade" id="modalCartao" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="modalCartao" tabindex="-1" aria-labelledby="modalCartaoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Cartão de Crédito</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-header" style="background-color: #e8f5e9; color: #2d6a4f;">
+          <h5 class="modal-title" id="modalCartaoLabel">Cartão de Crédito</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
           <form id="formCartao">
             <div class="mb-3">
-              <label for="nomeCartao" class="form-label">Nome do Cartão</label>
-              <input type="text" class="form-control" id="nomeCartao" placeholder="Ex: Cartão Nubank" required>
+              <label for="nomeCartao" class="form-label fw-semibold">Nome do Cartão</label>
+              <input type="text" class="form-control" id="nomeCartaoInput" placeholder="Ex: Cartão Nubank" required>
             </div>
             <div class="mb-3">
-              <label for="limiteCartao" class="form-label">Limite do Cartão</label>
-              <input type="number" class="form-control" id="limiteCartao" placeholder="Ex: 5000.00" step="0.01" required>
+              <label for="limiteCartao" class="form-label fw-semibold">Limite do Cartão (R$)</label>
+              <input type="number" class="form-control" id="limiteCartaoInput" placeholder="Ex: 5000.00" step="0.01" required>
             </div>
             <div class="mb-3">
-              <label for="vencimentoFatura" class="form-label">Vencimento da Fatura</label>
-              <input type="text" class="form-control" id="vencimentoFatura" placeholder="Ex: 15/04" maxlength="5" required>
+              <label for="vencimentoFatura" class="form-label fw-semibold">Vencimento da Fatura (DD/MM)</label>
+              <input type="text" class="form-control" id="vencimentoFaturaInput" placeholder="Ex: 15/04" maxlength="5" required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Escolha um Ícone</label>
-              <div id="iconesDisponiveis" class="d-flex flex-wrap gap-2"></div>
-              <input type="hidden" id="iconeCartao">
+              <label class="form-label fw-semibold">Escolha um Ícone</label>
+              <div id="iconesDisponiveis" class="d-flex flex-wrap gap-2 mb-2"></div>
+              <input type="hidden" id="iconeCartaoInput" required>
             </div>
-            <input type="hidden" id="indiceCartaoEditando">
+            <input type="hidden" id="cartaoIdEditando"> 
             <div class="d-flex justify-content-end">
-              <button type="button" class="btn btn-success" id="btnSalvar">Salvar</button>
+              <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-success px-4" id="btnSalvarCartao">
+                <i class="bi bi-check-circle me-2"></i>Salvar
+              </button>
             </div>
           </form>
         </div>
@@ -182,201 +163,358 @@
     </div>
   </div>
 
-  <!-- Modal de confirmação para exclusão -->
-  <div class="modal fade modal-confirmacao" id="modalConfirmacao" tabindex="-1" aria-hidden="true">
+  <div class="modal fade modal-confirmacao" id="modalConfirmacao" tabindex="-1" aria-labelledby="modalConfirmacaoExclusaoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Confirmar Exclusão</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title" id="modalConfirmacaoExclusaoLabel">Confirmar Exclusão</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
-          <p id="mensagemConfirmacao">Deseja realmente excluir o cartão "<span id="nomeCartaoExcluir"></span>"?</p>
+          <p>Deseja realmente excluir o cartão "<strong id="nomeCartaoExcluirSpan"></strong>"?</p>
+          <p class="text-muted small">Esta ação não poderá ser desfeita.</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-nao" data-bs-dismiss="modal">Não</button>
-          <button type="button" class="btn btn-sim" id="btnConfirmarExclusao">Sim</button>
+          <button type="button" class="btn btn-nao px-4" data-bs-dismiss="modal">Não</button>
+          <button type="button" class="btn btn-sim px-4" id="btnConfirmarExclusao">Sim, Excluir</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Scripts do Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Lista de ícones disponíveis
     const icones = [
-      'bi-credit-card',
-      'bi-credit-card-2-front',
-      'bi-credit-card-2-back',
-      'bi-wallet',
-      'bi-bank',
-      'bi-currency-dollar',
-      'bi-cash-stack'
+      'bi-credit-card-fill', 'bi-credit-card-2-front-fill', 'bi-credit-card-2-back-fill',
+      'bi-mastercard', 'bi-visa', 'bi-paypal', 'bi-stripe', 'bi-bank'
     ];
 
-    // Referência aos elementos da página
-    const listaCartoes = document.getElementById('listaCartoes');
-    const nomeCartao = document.getElementById('nomeCartao');
-    const limiteCartao = document.getElementById('limiteCartao');
-    const vencimentoFatura = document.getElementById('vencimentoFatura');
-    const iconeCartao = document.getElementById('iconeCartao');
-    const iconesDisponiveis = document.getElementById('iconesDisponiveis');
-    const indiceCartaoEditando = document.getElementById('indiceCartaoEditando');
-    const modalConfirmacao = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
-    const nomeCartaoExcluir = document.getElementById('nomeCartaoExcluir');
-    const btnConfirmarExclusao = document.getElementById('btnConfirmarExclusao');
-    const btnAdicionarCartao = document.getElementById('btnAdicionarCartao');
-    const modalCartao = document.getElementById('modalCartao');
+    const listaCartoesEl = document.getElementById('listaCartoes');
+    const nomeCartaoInputEl = document.getElementById('nomeCartaoInput'); // Alterado ID
+    const limiteCartaoInputEl = document.getElementById('limiteCartaoInput'); // Alterado ID
+    const vencimentoFaturaInputEl = document.getElementById('vencimentoFaturaInput'); // Alterado ID
+    const iconeCartaoInputEl = document.getElementById('iconeCartaoInput'); // Alterado ID
+    const iconesDisponiveisEl = document.getElementById('iconesDisponiveis');
+    const cartaoIdEditandoInputEl = document.getElementById('cartaoIdEditando');
+    
+    const modalCartaoEl = document.getElementById('modalCartao');
+    const bsModalCartao = new bootstrap.Modal(modalCartaoEl);
+    const modalConfirmacaoEl = document.getElementById('modalConfirmacao');
+    const bsModalConfirmacao = new bootstrap.Modal(modalConfirmacaoEl);
+    
+    const nomeCartaoExcluirSpan = document.getElementById('nomeCartaoExcluirSpan'); // Alterado ID para span
+    const btnConfirmarExclusaoEl = document.getElementById('btnConfirmarExclusao');
+    const btnAdicionarCartaoEl = document.getElementById('btnAdicionarCartao');
 
-    let cartoes = JSON.parse(localStorage.getItem('cartoes')) || [];
-    let indiceParaExcluir = null;
+    let cartoes = []; 
+    let idParaExcluir = null;
 
-    // Valida e formata o vencimento da fatura enquanto digita (formato DD/MM)
-    vencimentoFatura.addEventListener('input', () => {
-      let value = vencimentoFatura.value.replace(/\D/g, ''); // Remove tudo que não é número
-      if (value.length > 2) {
-        value = value.slice(0, 2) + '/' + value.slice(2); // Adiciona a barra após o dia
+    const API_BASE_URL = 'http://localhost:8000'; 
+
+    function getToken() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.warn('Token não encontrado.');
+        return null;
       }
-      vencimentoFatura.value = value.slice(0, 5); // Limita a DD/MM (5 caracteres)
+      return token;
+    }
+
+    vencimentoFaturaInputEl.addEventListener('input', () => {
+      let value = vencimentoFaturaInputEl.value.replace(/\D/g, ''); 
+      if (value.length > 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2); 
+      }
+      vencimentoFaturaInputEl.value = value.slice(0, 5); 
     });
 
-    // Exibe ícones na tela
     function renderizarIcones() {
-      iconesDisponiveis.innerHTML = '';
+      iconesDisponiveisEl.innerHTML = '';
       icones.forEach(nomeIcone => {
         const i = document.createElement('i');
         i.className = `bi ${nomeIcone} icone-opcao`;
+        i.title = nomeIcone.replace('bi-', '').replace(/-/g, ' ');
         i.onclick = () => {
-          iconeCartao.value = nomeIcone;
-          document.querySelectorAll('.icone-opcao').forEach(el => el.classList.remove('selecionado'));
+          iconeCartaoInputEl.value = nomeIcone; 
+          document.querySelectorAll('.icone-opcao.selecionado').forEach(el => el.classList.remove('selecionado'));
           i.classList.add('selecionado');
         };
-        iconesDisponiveis.appendChild(i);
+        iconesDisponiveisEl.appendChild(i);
       });
     }
 
-    // Exibe cartões salvos na tela
     function renderizarCartoes() {
-      listaCartoes.innerHTML = '';
-      cartoes.forEach((cartao, index) => {
+      listaCartoesEl.innerHTML = '';
+      if (!cartoes || cartoes.length === 0) {
+        listaCartoesEl.innerHTML = '<p class="text-center text-white-50 mt-3">Nenhum cartão de crédito cadastrado.</p>';
+        return;
+      }
+      cartoes.forEach(cartao => {
         const div = document.createElement('div');
         div.className = 'cartao-item';
+        div.setAttribute('data-id', cartao.id); 
+        const limiteFormatado = Number(cartao.limit).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        
         div.innerHTML = `
-          <div class="d-flex justify-content-between w-100 align-items-center">
-            <div>
-              <i class="bi ${cartao.icone} icone-preview me-2"></i>
-              <strong>${cartao.nome}</strong><br>
-              <small>Limite: R$ ${cartao.limite.toFixed(2)} | Vencimento: ${cartao.vencimentoFatura}</small>
-            </div>
-            <div>
-              <button class="btn btn-sm btn-outline-danger" onclick="excluirCartao(${index}, event)">
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
+          <div class="cartao-item-clickable-area" onclick="editarCartao(${cartao.id})">
+            <i class="bi ${cartao.icon || 'bi-credit-card'} icone-preview me-2"></i>
+            <strong>${cartao.name}</strong><br>
+            <small class="text-muted">Limite: ${limiteFormatado} | Vencimento: ${cartao.invoice_due_date_str}</small>
           </div>
+          <button class="btn btn-sm btn-outline-danger ms-auto" onclick="confirmarExclusao(${cartao.id}, '${cartao.name.replace(/'/g, "\\'")}', event)">
+            <i class="bi bi-trash"></i>
+          </button>
         `;
-        div.onclick = () => editarCartao(index);
-        listaCartoes.appendChild(div);
+        listaCartoesEl.appendChild(div);
       });
     }
 
-    // Excluir um cartão (abre o modal de confirmação)
-    function excluirCartao(index, event) {
-      event.stopPropagation();
-      indiceParaExcluir = index;
-      nomeCartaoExcluir.textContent = cartoes[index].nome;
-      modalConfirmacao.show();
+    async function fetchCartoes() {
+      const token = getToken();
+      if (!token) {
+        alert('Você precisa estar logado para ver seus cartões.');
+        window.location.href = 'login.html'; 
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/creditcards/`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.status === 401){
+            alert('Sessão expirada ou inválida. Faça login novamente.');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+        }
+        if (!response.ok) {
+          throw new Error(`Erro HTTP ${response.status}: ${await response.text()}`);
+        }
+        cartoes = await response.json();
+        renderizarCartoes();
+      } catch (error) {
+        console.error('Erro detalhado ao buscar cartões:', error);
+        alert(`Não foi possível carregar os cartões: ${error.message}`);
+        listaCartoesEl.innerHTML = '<p class="text-center text-danger mt-3">Erro ao carregar cartões. Tente novamente.</p>';
+      }
     }
 
-    // Confirmar exclusão ao clicar em "Sim"
-    btnConfirmarExclusao.onclick = () => {
-      if (indiceParaExcluir !== null) {
-        cartoes.splice(indiceParaExcluir, 1);
-        localStorage.setItem('cartoes', JSON.stringify(cartoes));
-        renderizarCartoes();
-        indiceParaExcluir = null;
-        modalConfirmacao.hide();
+    function confirmarExclusao(cardId, cardName, event) {
+      if (event) event.stopPropagation(); 
+      idParaExcluir = cardId;
+      nomeCartaoExcluirSpan.textContent = cardName; // Usando o span
+      bsModalConfirmacao.show();
+    }
+
+    btnConfirmarExclusaoEl.onclick = async () => {
+      if (idParaExcluir === null) return;
+      const token = getToken();
+      if (!token) return;
+
+      console.log(`[Excluir Cartão] Tentando excluir cartão ID: ${idParaExcluir}`);
+      try {
+        const response = await fetch(`${API_BASE_URL}/creditcards/${idParaExcluir}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        console.log(`[Excluir Cartão] Resposta do Backend - Status: ${response.status}`);
+        if (response.status === 401){
+            alert('Sessão expirada. Faça login novamente.');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+        }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({detail: `Erro ${response.status}`}));
+          throw new Error(errorData.detail || `Erro ao excluir cartão.`);
+        }
+        await fetchCartoes(); 
+        idParaExcluir = null;
+        bsModalConfirmacao.hide();
+        alert('Cartão de crédito excluído com sucesso!');
+      } catch (error) {
+        console.error('[Excluir Cartão] Erro:', error);
+        alert(`Não foi possível excluir o cartão: ${error.message}`);
       }
     };
 
-    // Editar um cartão existente
-    function editarCartao(index) {
-      const cartao = cartoes[index];
-      nomeCartao.value = cartao.nome;
-      limiteCartao.value = cartao.limite;
-      vencimentoFatura.value = cartao.vencimentoFatura;
-      iconeCartao.value = cartao.icone;
-      indiceCartaoEditando.value = index;
-      renderizarIcones();
+    function editarCartao(cardId) {
+      console.log("[Editar Cartão] Iniciada para cardId:", cardId);
+      const cartao = cartoes.find(c => c.id === Number(cardId));
+      console.log("[Editar Cartão] Cartão encontrado:", cartao);
+
+      if (!cartao) {
+        console.error('[Editar Cartão] Cartão não encontrado para ID:', cardId);
+        alert('Erro: Dados do cartão não encontrados.');
+        return;
+      }
+
+      document.getElementById('modalCartaoLabel').textContent = 'Editar Cartão de Crédito';
+      nomeCartaoInputEl.value = cartao.name;
+      limiteCartaoInputEl.value = cartao.limit;
+      vencimentoFaturaInputEl.value = cartao.invoice_due_date_str;
+      iconeCartaoInputEl.value = cartao.icon || ''; 
+      cartaoIdEditandoInputEl.value = cartao.id; 
+      console.log("[Editar Cartão] ID no campo escondido:", cartaoIdEditandoInputEl.value);
+
+      renderizarIcones(); 
       document.querySelectorAll('.icone-opcao').forEach(el => {
-        if (el.classList.contains(cartao.icone)) {
+        el.classList.remove('selecionado');
+        if (cartao.icon && el.classList.contains(cartao.icon)) {
           el.classList.add('selecionado');
-        } else {
-          el.classList.remove('selecionado');
         }
       });
-      const modal = new bootstrap.Modal(modalCartao);
-      modal.show();
-    }
-
-    // Salva ou edita um cartão
-    function salvarCartao() {
-      const nome = nomeCartao.value.trim();
-      const limite = parseFloat(limiteCartao.value);
-      const vencimentoFaturaValue = vencimentoFatura.value.trim();
-      const icone = iconeCartao.value.trim();
-      const indice = indiceCartaoEditando.value;
-
-      if (!nome || isNaN(limite) || !vencimentoFaturaValue || !icone) {
-        alert("Por favor, preencha todos os campos corretamente.");
-        return;
-      }
-
-      // Validação do vencimento da fatura (formato DD/MM)
-      const [dia, mes] = vencimentoFaturaValue.split('/').map(Number);
-      if (!vencimentoFaturaValue || isNaN(dia) || isNaN(mes) || 
-          dia < 1 || dia > 31 || mes < 1 || mes > 12) {
-        alert("O vencimento da fatura deve ser no formato DD/MM (ex.: 15/04), com dia entre 1 e 31 e mês entre 1 e 12.");
-        return;
-      }
-
-      const novoCartao = { nome, limite, vencimentoFatura: vencimentoFaturaValue, icone };
-
-      if (indice === '') {
-        cartoes.push(novoCartao);
+      
+      if (bsModalCartao) {
+        bsModalCartao.show();
       } else {
-        cartoes[indice] = novoCartao;
-        indiceCartaoEditando.value = '';
+        console.error("[Editar Cartão] Instância do modal bsModalCartao não encontrada!");
       }
-
-      localStorage.setItem('cartoes', JSON.stringify(cartoes));
-      renderizarCartoes();
-      nomeCartao.value = '';
-      limiteCartao.value = '';
-      vencimentoFatura.value = '';
-      iconeCartao.value = '';
-      const modal = bootstrap.Modal.getInstance(modalCartao);
-      modal.hide();
+    }
+    
+    function limparFormularioModalCartao() {
+        document.getElementById('modalCartaoLabel').textContent = 'Adicionar Cartão de Crédito';
+        document.getElementById('formCartao').reset(); 
+        iconeCartaoInputEl.value = ''; 
+        cartaoIdEditandoInputEl.value = ''; 
+        document.querySelectorAll('.icone-opcao.selecionado').forEach(el => el.classList.remove('selecionado'));
     }
 
-    // Evento ao clicar no botão "Salvar"
-    document.getElementById('btnSalvar').onclick = salvarCartao;
+    async function salvarCartao() {
+      const nome = nomeCartaoInputEl.value.trim();
+      const limite = parseFloat(limiteCartaoInputEl.value);
+      const vencimentoFaturaValue = vencimentoFaturaInputEl.value.trim();
+      const icone = iconeCartaoInputEl.value.trim();
+      const cardId = cartaoIdEditandoInputEl.value; 
 
-    // Resetar modal ao abrir para adicionar novo cartão
-    btnAdicionarCartao.addEventListener('click', () => {
-      nomeCartao.value = '';
-      limiteCartao.value = '';
-      vencimentoFatura.value = '';
-      iconeCartao.value = '';
-      indiceCartaoEditando.value = '';
-      renderizarIcones();
-      document.querySelectorAll('.icone-opcao').forEach(el => el.classList.remove('selecionado'));
+      console.log(`[Salvar Cartão] Iniciado. ID Edição: ${cardId || 'NOVO'}. Dados:`, {nome, limite, vencimentoFaturaValue, icone});
+
+      if (!nome) { alert("Por favor, preencha o nome do cartão."); return; }
+      if (isNaN(limite) || limite <= 0) { alert("Por favor, informe um limite válido e positivo."); return; }
+      if (!vencimentoFaturaValue || !/^\d{2}\/\d{2}$/.test(vencimentoFaturaValue)) { 
+        alert("O vencimento da fatura deve ser no formato DD/MM (ex.: 15/04)."); return; 
+      }
+      const [dia, mes] = vencimentoFaturaValue.split('/').map(Number);
+      if (dia < 1 || dia > 31 || mes < 1 || mes > 12) {
+          alert("Dia ou mês inválido para o vencimento da fatura."); return;
+      }
+      if (!icone) { alert("Por favor, escolha um ícone para o cartão."); return; }
+
+      const token = getToken();
+      if (!token) {
+          alert("Operação não permitida. Faça login novamente."); return;
+      }
+
+      // Nomes dos campos aqui devem bater com o schema Pydantic CreditCardCreate/CreditCardUpdate
+      const cardData = { 
+        name: nome, 
+        limit: limite, 
+        invoice_due_date_str: vencimentoFaturaValue, 
+        icon: icone 
+      };
+
+      let url = `${API_BASE_URL}/creditcards/`;
+      let method = 'POST';
+
+      if (cardId) { 
+        url += cardId; 
+        method = 'PUT';
+        console.log(`[Salvar Cartão] Modo EDIÇÃO (PUT) para URL: ${url}`);
+      } else {
+        console.log(`[Salvar Cartão] Modo CRIAÇÃO (POST) para URL: ${url}`);
+      }
+      console.log("[Salvar Cartão] Enviando dados:", JSON.stringify(cardData));
+
+      try {
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(cardData)
+        });
+        
+        console.log(`[Salvar Cartão] Resposta do Backend - Status: ${response.status}`);
+        const responseText = await response.text();
+        console.log(`[Salvar Cartão] Resposta do Backend - Corpo: ${responseText}`);
+
+        if (response.status === 401){
+            alert('Sessão expirada. Faça login novamente.');
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        let savedOrUpdatedCard;
+        try {
+            savedOrUpdatedCard = JSON.parse(responseText);
+        } catch(e) {
+            throw new Error(`Resposta do servidor não é JSON válido: ${responseText.substring(0,100)}`);
+        }
+
+        if (!response.ok) {
+          throw new Error(savedOrUpdatedCard.detail || `Erro ${response.status} ao salvar cartão.`);
+        }
+        
+        await fetchCartoes(); 
+        
+        bsModalCartao.hide(); 
+        alert(`Cartão ${cardId ? 'atualizado' : 'salvo'} com sucesso!`);
+
+      } catch (error) {
+        console.error('[Salvar Cartão] Erro:', error);
+        alert(`Não foi possível salvar o cartão: ${error.message}`);
+      }
+    }
+
+    document.getElementById('btnSalvarCartao').addEventListener('click', salvarCartao); // Alterado ID do botão
+
+    btnAdicionarCartaoEl.addEventListener('click', () => {
+      limparFormularioModalCartao();
+      renderizarIcones(); 
+    });
+    
+    modalCartaoEl.addEventListener('shown.bs.modal', () => {
+        if (!cartaoIdEditandoInputEl.value) { 
+            nomeCartaoInputEl.focus();
+        }
+    });
+    modalCartaoEl.addEventListener('hidden.bs.modal', () => {
+      limparFormularioModalCartao(); 
     });
 
-    // Inicialização
-    renderizarIcones();
-    renderizarCartoes();
+    window.onload = async () => {
+      if (document.getElementById('navbar-placeholder') && typeof fetch === 'function') {
+          try {
+            const navResponse = await fetch('../html/nav.html'); 
+            if (navResponse.ok) {
+                const navData = await navResponse.text();
+                document.getElementById('navbar-placeholder').innerHTML = navData;
+                if (typeof activateCurrentNav === 'function') { 
+                    activateCurrentNav(); 
+                } else {
+                    const path = window.location.pathname.split("/").pop();
+                    // Adicione aqui IDs específicos para os links da navbar dos cartões se necessário
+                    // if(path === "cartoes.html" && document.getElementById("nav-link-cartoes")) { 
+                    //     document.getElementById("nav-link-cartoes").classList.add("active");
+                    // }
+                }
+            } else {
+                console.error('Erro ao carregar a navbar:', navResponse.status);
+            }
+          } catch (error) {
+            console.error('Erro de rede ao carregar a navbar:', error);
+          }
+      }
+      
+      renderizarIcones(); 
+      await fetchCartoes(); 
+    };
   </script>
 </body>
 </html>

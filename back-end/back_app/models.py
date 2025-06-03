@@ -96,3 +96,22 @@ class Account:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
+
+@table_registry.mapped_as_dataclass
+class CreditCard:
+    __tablename__ = "credit_cards"
+
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    
+    name: Mapped[str] = mapped_column(String(100), index=True)  # Ex: "Cartão Nubank Gold"
+    limit: Mapped[float] = mapped_column(Float)                 # Limite do cartão
+    invoice_due_date_str: Mapped[str] = mapped_column(String(5)) # Para armazenar "DD/MM"
+    icon: Mapped[Optional[str]] = mapped_column(String(50), nullable=True) # Ex: "bi-credit-card"
+    
+    # Campos opcionais para considerar no futuro (para o resumo na principal.html):
+    # current_spending: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
+    
+    created_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now()
+    )

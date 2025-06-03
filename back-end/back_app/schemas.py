@@ -125,17 +125,20 @@ class UserUpdate(BaseModel):
 class AccountBase(BaseModel):
     name: str
     account_type: str
-    icon: Optional[str] = None  
+    icon: Optional[str] = None
     balance: float = 0.0
+
 
 class AccountCreate(AccountBase):
     pass
+
 
 class AccountUpdate(AccountBase):
     name: Optional[str] = None
     account_type: Optional[str] = None
     icon: Optional[str] = None
     balance: Optional[float] = None
+
 
 class AccountOut(AccountBase):
     id: int
@@ -144,5 +147,37 @@ class AccountOut(AccountBase):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class AccountList(BaseModel):
     accounts: List[AccountOut]
+
+
+class CreditCardBase(BaseModel):
+    name: str
+    limit: float
+    invoice_due_date_str: str  # Ex: "15/04"
+    icon: Optional[str] = None
+
+
+class CreditCardCreate(CreditCardBase):
+    pass
+
+
+class CreditCardUpdate(BaseModel):  # Para atualizações parciais
+    name: Optional[str] = None
+    limit: Optional[float] = None
+    invoice_due_date_str: Optional[str] = None
+    icon: Optional[str] = None
+
+
+class CreditCardOut(CreditCardBase):
+    id: int
+    user_id: int
+    created_at: datetime
+    # current_spending: Optional[float] = None # Se adicionar ao modelo e quiser retornar
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CreditCardList(BaseModel):
+    credit_cards: List[CreditCardOut]
