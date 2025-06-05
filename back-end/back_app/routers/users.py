@@ -116,18 +116,13 @@ def update_user(
         )
 
 
-@router.delete('/{user_id}', response_model=Message)
-def delete_user(
-    user_id: int,
+# Nova rota para deletar o usuário logado
+@router.delete('/me', response_model=Message)
+def delete_current_user(
     session: T_Session,  # type: ignore
     current_user: T_CurrentUser,
 ):
-    if current_user.id != user_id:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN, detail='Not enough permissions'
-        )
-
     session.delete(current_user)
     session.commit()
 
-    return {'message': 'User deleted'}
+    return {'message': 'Usuário deletado com sucesso'}

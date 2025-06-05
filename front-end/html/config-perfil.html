@@ -596,7 +596,7 @@ deleteAccountButton.addEventListener("click", async () => {
     // Limpar token e redirecionar
     localStorage.removeItem("token");
     setTimeout(() => {
-      window.location.href = "/login.html"; // ajuste conforme sua rota de login
+      window.location.href = "http://127.0.0.1:8000/static/html/cadastro.html";
     }, 1500);
   } catch (error) {
     console.error(error);
