@@ -21,6 +21,11 @@ fetch('../html/nav.html')
           else if (path === "dicas.html") {
             document.getElementById("buttons-nav-3").classList.add("active");
           }
+
+          else if (path === "investimento.html") {
+            document.getElementById("buttons-nav-4").classList.add("active");
+          }
+
         });
 
 

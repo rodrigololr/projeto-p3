@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investimentos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/dropdown.css">
+  <script src="../js/functions-nav.js"></script>
+
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #14532d;
+    }
+
+    .active {
+      color: #09bc8a !important;
+    }
+
+    .btn-generate-tips {
+      background: linear-gradient(90deg, #09bc8a 0%, #07a376 100%);
+      border: none;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    #investmentTip {
+      font-size: 1.2rem !important;
+      line-height: 1.6 !important;
+      color: #176d63 !important;
+    }
+
+    .btn-generate-tips:hover {
+      background: linear-gradient(90deg, #07a376 0%, #058c64 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .small-card {
+      background-color: #33a191;
+      border-radius: 12px;
+      padding: 20px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .small-card i {
+      font-size: 2rem;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .small-card h6 {
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    @media only screen and (max-width: 992px) {
+      .container {
+        padding: 0 10px;
+      }
+      .small-card {
+        height: 100px;
+        padding: 15px;
+      }
+      .small-card i {
+        font-size: 1.5rem;
+      }
+      .small-card h6 {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media only screen and (max-width: 576px) {
+      .container {
+        padding: 0 5px;
+      }
+      .btn-generate-tips {
+        font-size: 0.8rem;
+        padding: 8px 16px;
+      }
+      .small-card {
+        height: 90px;
+        padding: 12px;
+      }
+      .small-card i {
+        font-size: 1.3rem;
+      }
+      .small-card h6 {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body style="background: linear-gradient(176deg, rgba(80,137,145,1) 0%, rgba(201,237,214,1) 100%); background-repeat: no-repeat; background-size: cover;">
+  <div id="navbar-placeholder"></div>
+
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 style="color: #172a3a">Investimentos</h2>
+    </div>
+
+    <!-- Conteúdo da página será adicionado aqui futuramente -->
+    <div class="row">
+      <div class="col-12">
+        <!-- Card Pequeno socorrorosdflks- Dicas de Investimento -->
+        <div class="card mb-4" style="background-color: white; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); border: none;">
+          <div class="card-body" style="padding: 24px; min-height: 120px;">
+            <div class="d-flex align-items-center justify-content-between h-100">
+              <div class="flex-grow-1 me-3">
+                <h6 class="card-title mb-2" style="color: #172a3a; font-weight: 600; font-size: 1.5rem;">Dicas</h6>
+                <p class="card-text mb-0" id="investmentTip" style="color: #14532d; font-size: 0.85rem; line-height: 1.4;">
+                  Carregando dica...
+                </p>
+              </div>
+              <button class="btn btn-generate-tips text-white" id="refreshTip" onclick="getInvestmentTip()" style="min-width: 40px;">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Grande com 6 Cards Pequenos -->
+        <div class="card" style="background-color: white; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); border: none;">
+          <div class="card-body" style="padding: 32px;">
+            <div class="row g-3">
+              <!-- Card 1 -->
+              <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="small-card">
+                </div>
+              </div>
+              
+              <!-- Card 2 -->
+              <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="small-card">
+                </div>
+              </div>
+              
+              <!-- Card 3 -->
+              <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="small-card">
+                </div>
+              </div>
+              
+              <!-- Card 4 -->
+              <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="small-card">
+                </div>
+              </div>
+              
+              <!-- Card 5 -->
+              <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="small-card">
+                </div>
+              </div>
+              
+              <!-- Card 6 -->
+              <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="small-card">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Array com dicas de investimento
+    const investmentTips = [
+      "Diversifique seus investimentos em diferentes classes de ativos para reduzir riscos.",
+      "Mantenha uma reserva de emergência antes de investir em renda variável.",
+      "Invista regularmente, mesmo que seja uma pequena quantia mensalmente.",
+      "Estude o mercado antes de tomar decisões de investimento importantes.",
+      "Considere seus objetivos de longo prazo ao escolher investimentos.",
+      "Reinvista os dividendos para potencializar seus ganhos compostos.",
+      "Evite investir com base em emoções ou tendências passageiras.",
+      "Mantenha-se informado sobre as mudanças econômicas que podem afetar seus investimentos.",
+      "Considere investir em fundos de índice para diversificação automática.",
+      "Revise e rebalanceie sua carteira periodicamente.",
+      "Comece cedo - o tempo é seu maior aliado nos investimentos.",
+      "Não coloque todos os ovos na mesma cesta - diversifique sempre.",
+      "Invista apenas o dinheiro que você pode se dar ao luxo de perder.",
+      "Busque conhecimento contínuo sobre o mercado financeiro.",
+      "Tenha paciência - investimentos sólidos levam tempo para crescer."
+    ];
+
+    let currentTipIndex = 0;
+
+    function getInvestmentTip() {
+      const tipElement = document.getElementById('investmentTip');
+      const refreshButton = document.getElementById('refreshTip');
+      
+      // Animação de loading
+      refreshButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+      refreshButton.disabled = true;
+      tipElement.textContent = 'Carregando nova dica...';
+      
+      // Simula carregamento
+      setTimeout(() => {
+        // Pega uma dica aleatória diferente da atual
+        let newIndex;
+        do {
+          newIndex = Math.floor(Math.random() * investmentTips.length);
+        } while (newIndex === currentTipIndex && investmentTips.length > 1);
+        
+        currentTipIndex = newIndex;
+        tipElement.textContent = investmentTips[currentTipIndex];
+        
+        // Restaura o botão
+        refreshButton.disabled = false;
+        refreshButton.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+      }, 1000);
+    }
+
+    // Função para lidar com cliques nos cards
+    function handleCardClick(cardId) {
+      console.log('Card clicado:', cardId);
+      // Aqui você pode adicionar a lógica para cada card
+    }
+
+    // Carrega a primeira dica quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        getInvestmentTip();
+      }, 500);
+    });
+  </script>
+</body>
+</html>

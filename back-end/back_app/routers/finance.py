@@ -281,3 +281,4 @@ def generate_financial_tips(
     except Exception as e: 
         raise HTTPException(
             status_code=500, detail=f"Erro ao gerar dicas: {str(e)}")
+
